@@ -2,94 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Antique Book Color Palette */
+    --background: 39 35% 92%;
+    --foreground: 25 30% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 30% 88%;
+    --card-foreground: 25 30% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 39 35% 90%;
+    --popover-foreground: 25 30% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Aged paper primary */
+    --primary: 30 25% 35%;
+    --primary-foreground: 40 30% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Leather brown secondary */
+    --secondary: 25 40% 25%;
+    --secondary-foreground: 40 30% 92%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 35 20% 75%;
+    --muted-foreground: 25 20% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Burgundy accent */
+    --accent: 350 35% 30%;
+    --accent-foreground: 40 30% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 60% 40%;
+    --destructive-foreground: 40 30% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 25% 65%;
+    --input: 35 25% 80%;
+    --ring: 30 30% 40%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
+
+    /* Custom Book Variables */
+    --paper: 42 45% 88%;
+    --paper-dark: 38 30% 78%;
+    --spine: 25 45% 22%;
+    --spine-light: 28 35% 35%;
+    --ink: 25 35% 18%;
+    --gold: 43 70% 45%;
+    --burgundy: 350 40% 28%;
+
+    /* Book dimensions */
+    --spine-width: 40px;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -100,6 +69,191 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Paper texture effect */
+  .paper-texture {
+    background:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
+      linear-gradient(
+        135deg,
+        hsl(var(--paper)) 0%,
+        hsl(var(--paper-dark)) 50%,
+        hsl(var(--paper)) 100%
+      );
+    background-blend-mode: overlay, normal;
+  }
+
+  /* Aged paper stains */
+  .paper-aged {
+    position: relative;
+  }
+
+  .paper-aged::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, hsl(30 40% 70% / 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(35 35% 65% / 0.25) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 90%, hsl(25 30% 60% / 0.2) 0%, transparent 35%);
+    pointer-events: none;
+  }
+
+  /* Book spine styling */
+  .book-spine-left {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--spine)) 0%,
+      hsl(var(--spine-light)) 40%,
+      hsl(var(--spine)) 100%
+    );
+    box-shadow:
+      inset -2px 0 4px hsl(var(--spine) / 0.5),
+      inset 2px 0 2px hsl(var(--gold) / 0.2);
+  }
+
+  .book-spine-right {
+    background: linear-gradient(
+      270deg,
+      hsl(var(--spine)) 0%,
+      hsl(var(--spine-light)) 40%,
+      hsl(var(--spine)) 100%
+    );
+    box-shadow:
+      inset 2px 0 4px hsl(var(--spine) / 0.5),
+      inset -2px 0 2px hsl(var(--gold) / 0.2);
+  }
+
+  /* Page shadow */
+  .page-shadow-left {
+    box-shadow:
+      inset -15px 0 25px -10px hsl(var(--spine) / 0.15),
+      4px 0 8px -2px hsl(var(--spine) / 0.1);
+  }
+
+  .page-shadow-right {
+    box-shadow:
+      inset 15px 0 25px -10px hsl(var(--spine) / 0.15),
+      -4px 0 8px -2px hsl(var(--spine) / 0.1);
+  }
+
+  /* Ornamental border */
+  .ornament-border {
+    border: 2px solid hsl(var(--border));
+    position: relative;
+  }
+
+  .ornament-border::before,
+  .ornament-border::after {
+    content: '❧';
+    position: absolute;
+    color: hsl(var(--gold));
+    font-size: 1.25rem;
+  }
+
+  .ornament-border::before {
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .ornament-border::after {
+    bottom: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+  }
+
+  /* Vintage button style */
+  .btn-vintage {
+    @apply px-6 py-2 font-display text-sm tracking-wide uppercase;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--secondary)) 0%,
+      hsl(25 45% 18%) 100%
+    );
+    color: hsl(var(--gold));
+    border: 1px solid hsl(var(--gold) / 0.5);
+    box-shadow:
+      0 2px 4px hsl(var(--spine) / 0.3),
+      inset 0 1px 0 hsl(var(--gold) / 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .btn-vintage:hover {
+    box-shadow:
+      0 3px 6px hsl(var(--spine) / 0.4),
+      inset 0 1px 0 hsl(var(--gold) / 0.3);
+    transform: translateY(-1px);
+  }
+
+  /* Menu item styling */
+  .menu-item {
+    @apply px-4 py-2 font-body text-sm cursor-pointer transition-all duration-200;
+    color: hsl(var(--ink));
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .menu-item:hover {
+    background: hsl(var(--paper-dark) / 0.5);
+    color: hsl(var(--burgundy));
+  }
+
+  /* Decorative divider */
+  .divider-ornament {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .divider-ornament::before,
+  .divider-ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--border)),
+      transparent
+    );
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .font-body {
+    font-family: 'Crimson Text', 'Times New Roman', serif;
+  }
+
+  .text-ink {
+    color: hsl(var(--ink));
+  }
+
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+
+  .text-burgundy {
+    color: hsl(var(--burgundy));
+  }
+
+  .bg-paper {
+    background-color: hsl(var(--paper));
+  }
+
+  .bg-spine {
+    background-color: hsl(var(--spine));
   }
 }
