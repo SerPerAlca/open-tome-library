@@ -147,22 +147,22 @@ const HeroSelection = () => {
   const remainingPlayers = gameState.players.length - gameState.currentPlayerIndex;
 
   return (
-    <div className="h-screen max-h-screen bg-background flex flex-col overflow-hidden">
-      {/* Main book container - scales proportionally */}
-      <main className="flex-1 flex flex-col lg:flex-row min-h-0 max-h-[calc(95vh-5rem)]">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
+      {/* Main book container */}
+      <main className="flex-1 flex flex-col lg:flex-row min-h-0">
         {/* Left page - Hero image */}
-        <div className="flex-1 min-h-0 lg:min-h-0">
+        <div className="flex-1 min-h-0">
           <AnimatedBookPage side="left" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
               {/* Hero image - full page */}
-              <div className="flex-1 flex items-center justify-center p-4">
+              <div className="flex-1 flex items-center justify-center p-3">
                 <div className="relative w-full h-full max-w-md mx-auto">
                   <div className="absolute inset-0 border-4 border-gold/40 rounded-sm shadow-lg overflow-hidden">
                     <HeroImage name={currentHero.name} />
                   </div>
 
                   {/* Hero name plate */}
-                  <div className="absolute bottom-4 left-4 right-4 bg-background/90 border border-gold/50 p-3 text-center">
+                  <div className="absolute bottom-3 left-3 right-3 bg-background/90 border border-gold/50 p-2 text-center">
                     <span className="font-display text-lg text-gold">{heroTitleName}</span>
                     <span className="font-body text-sm text-muted-foreground block italic">
                       {currentHero.alias}
@@ -172,7 +172,7 @@ const HeroSelection = () => {
               </div>
 
               {/* Hero counter */}
-              <div className="text-center pb-2">
+              <div className="text-center py-1">
                 <span className="font-display text-sm text-muted-foreground">
                   — {currentHeroIndex + 1} de {heroes.length} —
                 </span>
@@ -182,12 +182,12 @@ const HeroSelection = () => {
         </div>
 
         {/* Right page - Hero description */}
-        <div className="flex-1 min-h-0 lg:min-h-0">
+        <div className="flex-1 min-h-0">
           <AnimatedBookPage side="right" animationState={animationState} className="h-full">
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col overflow-hidden">
               {/* Current player indicator */}
-              <div className="mb-6 text-center">
-                <div className="inline-block bg-gold/20 border border-gold/40 px-4 py-2 rounded-sm">
+              <div className="mb-3 text-center">
+                <div className="inline-block bg-gold/20 border border-gold/40 px-4 py-1.5 rounded-sm">
                   <span className="font-display text-lg text-gold">
                     Turno de {currentPlayer.name}
                   </span>
@@ -195,52 +195,54 @@ const HeroSelection = () => {
               </div>
 
               {/* Hero info */}
-              <div className="flex-1 flex flex-col">
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 {/* Decorative header */}
-                <div className="text-center mb-4">
-                  <div className="text-gold text-2xl mb-2">☙</div>
+                <div className="text-center mb-2">
+                  <div className="text-gold text-xl mb-1">☙</div>
                   <h2 className="font-display text-2xl md:text-3xl text-primary mb-1">
                     {heroTitleName}
                   </h2>
-                  <p className="font-body text-lg text-muted-foreground italic mb-2">
+                  <p className="font-body text-base text-muted-foreground italic mb-1">
                     {currentHero.alias}
                   </p>
                   <div className="divider-ornament mx-auto max-w-xs" />
                 </div>
 
-                {/* Description with line breaks */}
-                <div className="flex-1 flex flex-col items-start justify-start px-4 overflow-y-auto min-h-0">
-                  {descriptionParagraphs.map((paragraph, index) => (
-                    <p
-                      key={index}
-                      className={`font-body text-xl leading-loose text-foreground/90 text-justify mb-4 ${
-                        index === 0
-                          ? "first-letter:text-4xl first-letter:font-display first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-none"
-                          : ""
-                      }`}
-                    >
-                      {paragraph.trim()}
-                    </p>
-                  ))}
+                {/* Description with line breaks - contained within book */}
+                <div className="flex-1 flex flex-col items-start justify-start px-4 overflow-hidden min-h-0">
+                  <div className="overflow-y-auto h-full w-full">
+                    {descriptionParagraphs.map((paragraph, index) => (
+                      <p
+                        key={index}
+                        className={`font-body text-lg leading-relaxed text-foreground/90 text-justify mb-3 ${
+                          index === 0
+                            ? "first-letter:text-4xl first-letter:font-display first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-none"
+                            : ""
+                        }`}
+                      >
+                        {paragraph.trim()}
+                      </p>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Players remaining info */}
-                <div className="text-center mt-4 text-muted-foreground font-body text-sm italic">
+                <div className="text-center py-1 text-muted-foreground font-body text-sm italic">
                   {remainingPlayers} jugador{remainingPlayers !== 1 ? 'es' : ''} por elegir
                 </div>
               </div>
 
               {/* Decorative footer */}
-              <div className="text-center mt-4">
-                <div className="text-gold text-2xl">❧</div>
+              <div className="text-center py-1">
+                <div className="text-gold text-xl">❧</div>
               </div>
             </div>
           </AnimatedBookPage>
         </div>
       </main>
 
-      {/* Action buttons area */}
-      <footer className="py-4 px-6 bg-secondary/90 border-t-2 border-gold/30">
+      {/* Action buttons area - compact */}
+      <footer className="py-2 px-4 bg-secondary/90 border-t-2 border-gold/30">
         <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
           {/* 1. Héroe Anterior */}
           <button
