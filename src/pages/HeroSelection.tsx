@@ -147,11 +147,11 @@ const HeroSelection = () => {
   const remainingPlayers = gameState.players.length - gameState.currentPlayerIndex;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Main book container */}
-      <main className="flex-1 flex flex-col lg:flex-row">
+    <div className="h-screen max-h-screen bg-background flex flex-col overflow-hidden">
+      {/* Main book container - scales proportionally */}
+      <main className="flex-1 flex flex-col lg:flex-row min-h-0 max-h-[calc(95vh-5rem)]">
         {/* Left page - Hero image */}
-        <div className="flex-1 min-h-[50vh] lg:min-h-0">
+        <div className="flex-1 min-h-0 lg:min-h-0">
           <AnimatedBookPage side="left" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
               {/* Hero image - full page */}
@@ -182,7 +182,7 @@ const HeroSelection = () => {
         </div>
 
         {/* Right page - Hero description */}
-        <div className="flex-1 min-h-[50vh] lg:min-h-0">
+        <div className="flex-1 min-h-0 lg:min-h-0">
           <AnimatedBookPage side="right" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
               {/* Current player indicator */}
@@ -209,11 +209,11 @@ const HeroSelection = () => {
                 </div>
 
                 {/* Description with line breaks */}
-                <div className="flex-1 flex flex-col items-start justify-start px-4 overflow-y-auto">
+                <div className="flex-1 flex flex-col items-start justify-start px-4 overflow-y-auto min-h-0">
                   {descriptionParagraphs.map((paragraph, index) => (
                     <p
                       key={index}
-                      className={`font-body text-lg leading-relaxed text-foreground/90 text-justify mb-4 ${
+                      className={`font-body text-xl leading-loose text-foreground/90 text-justify mb-4 ${
                         index === 0
                           ? "first-letter:text-4xl first-letter:font-display first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-none"
                           : ""

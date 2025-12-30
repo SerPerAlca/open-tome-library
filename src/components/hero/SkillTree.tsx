@@ -9,7 +9,7 @@ interface SkillTreeProps {
 
 const SCALE = 1.8;
 const NODE_RADIUS = 18;
-const PADDING = 30;
+const PADDING = 35;
 
 const SkillTree = ({ nodes }: SkillTreeProps) => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
@@ -124,12 +124,12 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                     {/* Node label */}
                     <text
                       x={coords.x}
-                      y={coords.y + NODE_RADIUS + 24}
+                      y={coords.y + NODE_RADIUS + 28}
                       textAnchor="middle"
                       className="font-body fill-current"
                       style={{ 
                         fill: "hsl(43 70% 45%)",
-                        fontSize: "16px",
+                        fontSize: "20px",
                         fontWeight: "bold",
                       }}
                     >
