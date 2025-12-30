@@ -32,9 +32,19 @@ export interface HeroAPIResponse {
 
 // Default skill tree for testing when API doesn't provide one
 export const DEFAULT_SKILL_TREE: SkillTreeNode[] = [
-  { id: "1", label: "Inicio", tooltip: "Nodo inicial de rastreo", x: 50, y: 50, connections: ["2", "3"] },
-  { id: "2", label: "Puntería", tooltip: "+1 Daño Físico", x: 150, y: 20, connections: [] },
-  { id: "3", label: "Vínculo Animal", tooltip: "Desbloquea compañero lobo", x: 150, y: 80, connections: [] }
+  { id: "1", label: "Inicio", tooltip: "Nodo inicial de rastreo", x: 100, y: 390, connections: ["2", "3"] },
+  { id: "2", label: "+1 Ataque Físico", tooltip: "+1 Daño Físico", x: 50, y: 340, connections: ["5", "7"] },
+  { id: "3", label: "+1 Evasión", tooltip: "+1 Evasión", x: 150, y: 340, connections: ["4", "7"] },
+  { id: "4", label: "Llamada del Roble", tooltip: "Desbloquea compañero lobo", x: 180, y: 290, connections: ["8"] },
+  { id: "5", label: "+1 Vitalidad", tooltip: "+1 Vitalidad", x: 20, y: 290, connections: ["6"] },
+  { id: "6", label: "Doble Flecha", tooltip: "Dispara dos flechas", x: 10, y: 230, connections: ["9"] },
+  { id: "7", label: "+1 Defensa", tooltip: "+1 Defensa", x: 100, y: 290, connections: ["9"] },
+  { id: "8", label: "+1 Evasión", tooltip: "+1 Evasión", x: 190, y: 230, connections: ["9"] },
+  { id: "9", label: "+1 Maná", tooltip: "+1 maná", x: 100, y: 230, connections: ["10"] },
+  { id: "10", label: "Disparo Solar", tooltip: "Dispara al cielo cegando a los enemigos", x: 100, y: 170, connections: ["11"] },
+  { id: "11", label: "+1 Defensa Mágica", tooltip: "+1 Defensa Mágica", x: 100, y: 110, connections: ["12"] },
+  { id: "12", label: "+1 Maná", tooltip: "+1 Maná", x: 100, y: 50, connections: ["13"] },
+  { id: "13", label: "Lluvia de Flechas", tooltip: "Dispara hasta 4 flechas a la vez", x: 100, y: -10, connections: [] },
 ];
 
 // Stat labels in Spanish
