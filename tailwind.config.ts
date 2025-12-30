@@ -95,17 +95,17 @@ export default {
             boxShadow: "0 0 0 0 rgba(0,0,0,0)",
           },
         },
-        "page-turn-backward": {
+        "page-turn-backward-left": {
           "0%": {
-            transform: "rotateY(-180deg)",
+            transform: "rotateY(0deg)",
             boxShadow: "0 0 0 0 rgba(0,0,0,0)",
           },
           "50%": {
-            transform: "rotateY(-90deg)",
-            boxShadow: "-10px 0 30px -5px rgba(0,0,0,0.3)",
+            transform: "rotateY(90deg)",
+            boxShadow: "10px 0 30px -5px rgba(0,0,0,0.3)",
           },
           "100%": {
-            transform: "rotateY(0deg)",
+            transform: "rotateY(180deg)",
             boxShadow: "0 0 0 0 rgba(0,0,0,0)",
           },
         },
@@ -122,8 +122,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "page-turn-forward": "page-turn-forward 0.6s ease-in-out forwards",
-        "page-turn-backward": "page-turn-backward 0.6s ease-in-out forwards",
-        "page-turn-backward-reverse": "page-turn-backward 0.6s ease-in-out reverse forwards",
+        "page-turn-backward-left": "page-turn-backward-left 0.6s ease-in-out forwards",
         "fade-in": "fade-in 0.4s ease-out",
         "content-fade": "content-fade 0.3s ease-out",
       },
