@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { SkillTreeNode } from "@/types/hero-api";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { cn } from "@/lib/utils";
 
 interface SkillTreeProps {
   nodes: SkillTreeNode[];
@@ -20,7 +16,7 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
 
   // Calculate SVG dimensions based on node positions
   const maxX = Math.max(...nodes.map(n => n.x)) * SCALE + PADDING * 2;
-  const maxY = Math.max(...nodes.map(n => n.y)) * SCALE + PADDING * 2;
+  const maxY = Math.max(...nodes.map(n => n.y)) * SCALE + PADDING * 2 + 30; // Extra space for labels
 
   // Create a map for quick node lookup
   const nodeMap = new Map(nodes.map(n => [n.id, n]));
@@ -37,13 +33,12 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
         ✦ Árbol de Habilidades ✦
       </h4>
       
-      <TooltipProvider delayDuration={0}>
+      <TooltipPrimitive.Provider delayDuration={0}>
         <svg
           width="100%"
           height={maxY}
           viewBox={`0 0 ${maxX} ${maxY}`}
           className="overflow-visible"
-          style={{ pointerEvents: "none" }}
         >
           {/* Connections */}
           {nodes.map(node => {
@@ -74,8 +69,8 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
             const isHovered = hoveredNode === node.id;
 
             return (
-              <Tooltip key={node.id}>
-                <TooltipTrigger asChild>
+              <TooltipPrimitive.Root key={node.id}>
+                <TooltipPrimitive.Trigger asChild>
                   <g
                     onMouseEnter={() => setHoveredNode(node.id)}
                     onMouseLeave={() => setHoveredNode(null)}
@@ -92,7 +87,7 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                       strokeWidth={isHovered ? 3 : 0}
                       className={isHovered ? "skill-node-glow" : ""}
                       style={{
-                        filter: isHovered ? "drop-shadow(0 0 12px hsl(43 70% 55%)) drop-shadow(0 0 20px hsl(43 70% 45%))" : "none",
+                        filter: isHovered ? "drop-shadow(0 0 20px hsl(43 70% 55%)) drop-shadow(0 0 30px hsl(43 70% 45%))" : "none",
                         transition: "all 0.2s ease",
                       }}
                     />
@@ -120,7 +115,7 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                       strokeWidth="2.5"
                       style={{
                         transition: "all 0.2s ease",
-                        filter: isHovered ? "drop-shadow(0 0 10px hsl(43 70% 55%))" : "none",
+                        filter: isHovered ? "drop-shadow(0 0 20px hsl(43 70% 55%))" : "none",
                         transform: isHovered ? `scale(1.1)` : "scale(1)",
                         transformOrigin: `${coords.x}px ${coords.y}px`,
                       }}
@@ -129,32 +124,37 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                     {/* Node label */}
                     <text
                       x={coords.x}
-                      y={coords.y + NODE_RADIUS + 16}
+                      y={coords.y + NODE_RADIUS + 24}
                       textAnchor="middle"
                       className="font-body fill-current"
                       style={{ 
                         fill: "hsl(43 70% 45%)",
-                        fontSize: "11px",
-                        fontWeight: 500,
+                        fontSize: "16px",
+                        fontWeight: "bold",
                       }}
                     >
                       {node.label}
                     </text>
                   </g>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  sideOffset={8}
-                  className="bg-spine text-gold border-gold/50 font-body z-[9999] pointer-events-none"
-                  style={{ zIndex: 9999 }}
-                >
-                  <p className="text-sm">{node.tooltip}</p>
-                </TooltipContent>
-              </Tooltip>
+                </TooltipPrimitive.Trigger>
+                <TooltipPrimitive.Portal>
+                  <TooltipPrimitive.Content
+                    side="top"
+                    sideOffset={12}
+                    className={cn(
+                      "z-[99999] overflow-hidden rounded-md bg-spine px-3 py-1.5 text-sm text-gold border border-gold/50 font-body",
+                      "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+                    )}
+                  >
+                    <p>{node.tooltip}</p>
+                    <TooltipPrimitive.Arrow className="fill-spine" />
+                  </TooltipPrimitive.Content>
+                </TooltipPrimitive.Portal>
+              </TooltipPrimitive.Root>
             );
           })}
         </svg>
-      </TooltipProvider>
+      </TooltipPrimitive.Provider>
     </div>
   );
 };
