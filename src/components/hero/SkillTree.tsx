@@ -128,10 +128,10 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                       textAnchor="middle"
                       className="font-body"
                       style={{ 
-                        fill: "hsl(43 70% 50%)",
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+                        fill: "hsl(43 74% 58%)",
+                        fontSize: "20px",
+                        fontWeight: "400",
+                        textShadow: "0 1px 3px rgba(0,0,0,0.6)",
                       }}
                     >
                       {node.label}
