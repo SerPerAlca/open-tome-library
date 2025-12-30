@@ -276,25 +276,33 @@
   }
 }
 
-@keyframes subtle-shake {
-  0%, 100% {
-    transform: translateX(0) translateY(-1px);
+@keyframes ripple-expand {
+  0% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 0 0 hsl(43 70% 55% / 0.8),
+      0 0 10px hsl(43 70% 50% / 0.7),
+      0 0 25px hsl(43 70% 45% / 0.5);
   }
-  10%, 30%, 50% {
-    transform: translateX(-2px) translateY(-1px);
+  50% {
+    transform: scale(1.05);
+    box-shadow: 
+      0 0 0 15px hsl(43 70% 55% / 0),
+      0 0 30px hsl(43 70% 50% / 0.5),
+      0 0 60px hsl(43 70% 45% / 0.3);
   }
-  20%, 40% {
-    transform: translateX(2px) translateY(-1px);
-  }
-  60% {
-    transform: translateX(0) translateY(-1px);
+  100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 0 25px hsl(43 70% 55% / 0),
+      0 0 10px hsl(43 70% 50% / 0.7),
+      0 0 25px hsl(43 70% 45% / 0.5);
   }
 }
 
 .btn-select-cta {
-  animation: 
-    golden-glow 2s ease-in-out infinite,
-    subtle-shake 4s ease-in-out infinite;
+  position: relative;
+  animation: golden-glow 2s ease-in-out infinite;
   border: 2px solid hsl(43 70% 50%) !important;
   background: linear-gradient(
     180deg,
@@ -302,11 +310,16 @@
     hsl(25 45% 22%) 50%,
     hsl(43 70% 30%) 100%
   ) !important;
+  transition: transform 0.15s ease;
 }
 
 .btn-select-cta:hover {
-  animation: golden-glow 1s ease-in-out infinite;
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px);
+}
+
+.btn-select-cta:active {
+  animation: ripple-expand 0.6s ease-out;
+  transform: scale(0.98);
 }
 
 @layer utilities {
