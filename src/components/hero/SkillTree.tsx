@@ -16,7 +16,7 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
 
   // Calculate SVG dimensions based on node positions
   const maxX = Math.max(...nodes.map(n => n.x)) * SCALE + PADDING * 2;
-  const maxY = Math.max(...nodes.map(n => n.y)) * SCALE + PADDING * 2 + 30; // Extra space for labels
+  const maxY = Math.max(...nodes.map(n => n.y)) * SCALE + PADDING * 2 + 40; // Extra space for labels
 
   // Create a map for quick node lookup
   const nodeMap = new Map(nodes.map(n => [n.id, n]));
@@ -124,13 +124,14 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                     {/* Node label */}
                     <text
                       x={coords.x}
-                      y={coords.y + NODE_RADIUS + 28}
+                      y={coords.y + NODE_RADIUS + 30}
                       textAnchor="middle"
-                      className="font-body fill-current"
+                      className="font-body"
                       style={{ 
-                        fill: "hsl(43 70% 45%)",
-                        fontSize: "20px",
-                        fontWeight: "bold",
+                        fill: "hsl(43 70% 50%)",
+                        fontSize: "18px",
+                        fontWeight: "600",
+                        textShadow: "0 1px 2px rgba(0,0,0,0.5)",
                       }}
                     >
                       {node.label}
