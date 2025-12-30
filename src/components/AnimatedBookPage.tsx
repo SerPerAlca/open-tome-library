@@ -17,28 +17,31 @@ const AnimatedBookPage = ({
   className,
 }: AnimatedBookPageProps) => {
   const getAnimationClasses = () => {
-    if (side === "right") {
-      switch (animationState) {
-        case "turning-forward":
-          return "animate-page-turn-forward";
-        case "turning-backward":
-          return "animate-page-turn-backward-reverse";
-        default:
-          return "";
-      }
+    // Right page animates for forward navigation
+    if (side === "right" && animationState === "turning-forward") {
+      return "animate-page-turn-forward";
+    }
+    // Left page animates for backward navigation
+    if (side === "left" && animationState === "turning-backward") {
+      return "animate-page-turn-backward-left";
     }
     return "";
   };
+
+  // Both sides need perspective for their respective animations
+  const needsPerspective = 
+    (side === "right" && animationState === "turning-forward") ||
+    (side === "left" && animationState === "turning-backward");
 
   return (
     <div
       className={cn(
         "relative h-full",
-        side === "right" && "perspective-1000",
+        needsPerspective && "perspective-1000",
         className
       )}
       style={{
-        perspective: side === "right" ? "1500px" : undefined,
+        perspective: needsPerspective ? "1500px" : undefined,
         transformStyle: "preserve-3d",
       }}
     >
@@ -50,6 +53,7 @@ const AnimatedBookPage = ({
         style={{
           transformOrigin: side === "right" ? "left center" : "right center",
           transformStyle: "preserve-3d",
+          backfaceVisibility: "hidden",
         }}
       >
         <BookPage side={side} className="h-full">

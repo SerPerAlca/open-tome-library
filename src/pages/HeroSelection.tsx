@@ -53,22 +53,52 @@ const HeroSelection = () => {
     );
   }, [isAnimating, heroes.length, turnPageForward]);
 
-  const handleSelectHero = useCallback(() => {
-    if (!currentHero || isHeroSelected || isSelectAnimating) return;
+  // Find next available hero index (not selected)
+  const findNextAvailableHeroIndex = useCallback((fromIndex: number): number => {
+    const updatedSelectedCodes = new Set([...selectedHeroCodes, currentHero?.code]);
+    
+    for (let i = 1; i <= heroes.length; i++) {
+      const nextIndex = (fromIndex + i) % heroes.length;
+      const nextHero = heroes[nextIndex];
+      if (nextHero && !updatedSelectedCodes.has(nextHero.code)) {
+        return nextIndex;
+      }
+    }
+    return fromIndex; // Fallback to current if all selected
+  }, [heroes, selectedHeroCodes, currentHero?.code]);
+
+  const handleSelectHero = useCallback(async () => {
+    if (!currentHero || isHeroSelected || isSelectAnimating || isAnimating) return;
 
     // Trigger ripple animation
     setIsSelectAnimating(true);
     
-    // Wait for animation, then process selection
-    setTimeout(() => {
-      const isComplete = selectHero(currentHero.code);
-      setIsSelectAnimating(false);
+    // Wait for ripple animation
+    await new Promise(resolve => setTimeout(resolve, 400));
+    
+    const isComplete = selectHero(currentHero.code);
+    setIsSelectAnimating(false);
 
-      if (isComplete) {
-        navigate("/seleccion-completa");
-      }
-    }, 400); // Match ripple animation duration
-  }, [currentHero, isHeroSelected, isSelectAnimating, selectHero, navigate]);
+    if (isComplete) {
+      navigate("/seleccion-completa");
+    } else {
+      // Not complete - animate to next available hero for next player
+      const nextAvailableIndex = findNextAvailableHeroIndex(currentHeroIndex);
+      
+      await turnPageForward();
+      setCurrentHeroIndex(nextAvailableIndex);
+    }
+  }, [
+    currentHero, 
+    isHeroSelected, 
+    isSelectAnimating, 
+    isAnimating,
+    selectHero, 
+    navigate, 
+    findNextAvailableHeroIndex, 
+    currentHeroIndex, 
+    turnPageForward
+  ]);
 
   // Loading state
   if (isLoading) {
