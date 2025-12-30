@@ -1,13 +1,12 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
-import { GameState, Hero, Player, createInitialGameState, HEROES } from "@/types/game";
+import { GameState, Player, createInitialGameState } from "@/types/game";
 
 interface GameContextType {
   gameState: GameState | null;
   initializeGame: (playerNames: string[]) => void;
-  selectHero: (heroId: string) => boolean; // Returns true if selection complete
+  selectHero: (heroCode: string) => boolean;
   getCurrentPlayer: () => Player | null;
-  getAvailableHeroes: () => Hero[];
-  getAssignedHeroes: () => { player: Player; hero: Hero }[];
+  getSelectedHeroCodes: () => string[];
   resetGame: () => void;
 }
 
@@ -20,32 +19,30 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     setGameState(createInitialGameState(playerNames));
   }, []);
 
-  const selectHero = useCallback((heroId: string): boolean => {
+  const selectHero = useCallback((heroCode: string): boolean => {
     if (!gameState) return false;
 
-    const { players, availableHeroes, currentPlayerIndex } = gameState;
+    const { players, currentPlayerIndex, selectedHeroCodes } = gameState;
 
-    // Find and remove hero from available
-    const heroIndex = availableHeroes.findIndex((h) => h.id === heroId);
-    if (heroIndex === -1) return false;
-
-    const newAvailableHeroes = availableHeroes.filter((h) => h.id !== heroId);
+    // Check if hero is already selected
+    if (selectedHeroCodes.includes(heroCode)) return false;
 
     // Assign hero to current player
     const newPlayers = [...players];
     newPlayers[currentPlayerIndex] = {
       ...newPlayers[currentPlayerIndex],
-      heroId,
+      heroId: heroCode,
     };
 
+    const newSelectedHeroCodes = [...selectedHeroCodes, heroCode];
     const nextPlayerIndex = currentPlayerIndex + 1;
     const isComplete = nextPlayerIndex >= players.length;
 
     setGameState({
       players: newPlayers,
-      availableHeroes: newAvailableHeroes,
       currentPlayerIndex: isComplete ? currentPlayerIndex : nextPlayerIndex,
       isSelectionComplete: isComplete,
+      selectedHeroCodes: newSelectedHeroCodes,
     });
 
     return isComplete;
@@ -56,19 +53,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     return gameState.players[gameState.currentPlayerIndex] || null;
   }, [gameState]);
 
-  const getAvailableHeroes = useCallback((): Hero[] => {
-    return gameState?.availableHeroes || [];
-  }, [gameState]);
-
-  const getAssignedHeroes = useCallback((): { player: Player; hero: Hero }[] => {
-    if (!gameState) return [];
-
-    return gameState.players
-      .filter((p) => p.heroId)
-      .map((player) => ({
-        player,
-        hero: HEROES.find((h) => h.id === player.heroId)!,
-      }));
+  const getSelectedHeroCodes = useCallback((): string[] => {
+    return gameState?.selectedHeroCodes || [];
   }, [gameState]);
 
   const resetGame = useCallback(() => {
@@ -82,8 +68,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         initializeGame,
         selectHero,
         getCurrentPlayer,
-        getAvailableHeroes,
-        getAssignedHeroes,
+        getSelectedHeroCodes,
         resetGame,
       }}
     >

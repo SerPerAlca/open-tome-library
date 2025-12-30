@@ -317,8 +317,9 @@
   transform: translateY(-2px);
 }
 
-.btn-select-cta:active {
-  animation: ripple-expand 0.6s ease-out;
+.btn-select-cta:active,
+.btn-ripple-active {
+  animation: ripple-expand 0.4s ease-out forwards;
   transform: scale(0.98);
 }
 

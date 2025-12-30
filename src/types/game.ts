@@ -16,9 +16,9 @@ export interface Player {
 // Game state
 export interface GameState {
   players: Player[];
-  availableHeroes: Hero[];
   currentPlayerIndex: number;
   isSelectionComplete: boolean;
+  selectedHeroCodes: string[];
 }
 
 // Predefined heroes data
@@ -80,7 +80,7 @@ export const createInitialGameState = (playerNames: string[]): GameState => ({
     name,
     heroId: undefined,
   })),
-  availableHeroes: [...HEROES],
   currentPlayerIndex: 0,
   isSelectionComplete: false,
+  selectedHeroCodes: [],
 });

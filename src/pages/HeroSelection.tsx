@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "@/context/GameContext";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
@@ -10,29 +10,23 @@ import AttributesPopover from "@/components/hero/AttributesPopover";
 
 const HeroSelection = () => {
   const navigate = useNavigate();
-  const { gameState, getCurrentPlayer, selectHero } = useGame();
+  const { gameState, getCurrentPlayer, selectHero, getSelectedHeroCodes } = useGame();
   const { animationState, isAnimating, turnPageForward, turnPageBackward } = usePageAnimation();
   const { heroes, isLoading, error } = useHeroesAPI();
 
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [isSelectAnimating, setIsSelectAnimating] = useState(false);
+  const selectButtonRef = useRef<HTMLButtonElement>(null);
   const currentPlayer = getCurrentPlayer();
 
   // Get selected hero codes from game state
   const selectedHeroCodes = useMemo(() => {
-    if (!gameState) return new Set<string>();
-    return new Set(
-      gameState.players
-        .filter(p => p.heroId)
-        .map(p => p.heroId!)
-    );
-  }, [gameState]);
+    return new Set(getSelectedHeroCodes());
+  }, [getSelectedHeroCodes]);
 
-  // Filter available heroes (not yet selected)
-  const availableHeroes = useMemo(() => {
-    return heroes.filter(hero => !selectedHeroCodes.has(hero.code));
-  }, [heroes, selectedHeroCodes]);
-
-  const currentHero = availableHeroes[currentHeroIndex];
+  // Check if current hero is already selected
+  const currentHero = heroes[currentHeroIndex];
+  const isHeroSelected = currentHero ? selectedHeroCodes.has(currentHero.code) : false;
 
   // Redirect if no game state
   useEffect(() => {
@@ -41,40 +35,40 @@ const HeroSelection = () => {
     }
   }, [gameState, navigate]);
 
-  // Reset hero index when available heroes change
-  useEffect(() => {
-    if (currentHeroIndex >= availableHeroes.length && availableHeroes.length > 0) {
-      setCurrentHeroIndex(0);
-    }
-  }, [availableHeroes.length, currentHeroIndex]);
-
   const handlePrevHero = useCallback(async () => {
-    if (isAnimating || availableHeroes.length === 0) return;
+    if (isAnimating || heroes.length === 0) return;
 
     await turnPageBackward();
     setCurrentHeroIndex((prev) =>
-      prev === 0 ? availableHeroes.length - 1 : prev - 1
+      prev === 0 ? heroes.length - 1 : prev - 1
     );
-  }, [isAnimating, availableHeroes.length, turnPageBackward]);
+  }, [isAnimating, heroes.length, turnPageBackward]);
 
   const handleNextHero = useCallback(async () => {
-    if (isAnimating || availableHeroes.length === 0) return;
+    if (isAnimating || heroes.length === 0) return;
 
     await turnPageForward();
     setCurrentHeroIndex((prev) =>
-      prev === availableHeroes.length - 1 ? 0 : prev + 1
+      prev === heroes.length - 1 ? 0 : prev + 1
     );
-  }, [isAnimating, availableHeroes.length, turnPageForward]);
+  }, [isAnimating, heroes.length, turnPageForward]);
 
   const handleSelectHero = useCallback(() => {
-    if (!currentHero) return;
+    if (!currentHero || isHeroSelected || isSelectAnimating) return;
 
-    const isComplete = selectHero(currentHero.code);
+    // Trigger ripple animation
+    setIsSelectAnimating(true);
+    
+    // Wait for animation, then process selection
+    setTimeout(() => {
+      const isComplete = selectHero(currentHero.code);
+      setIsSelectAnimating(false);
 
-    if (isComplete) {
-      navigate("/seleccion-completa");
-    }
-  }, [currentHero, selectHero, navigate]);
+      if (isComplete) {
+        navigate("/seleccion-completa");
+      }
+    }, 400); // Match ripple animation duration
+  }, [currentHero, isHeroSelected, isSelectAnimating, selectHero, navigate]);
 
   // Loading state
   if (isLoading) {
@@ -109,7 +103,6 @@ const HeroSelection = () => {
   }
 
   // Format the hero display name
-  const heroDisplayName = formatHeroName(currentHero.name, currentHero.alias);
   const heroTitleName = toTitleCase(currentHero.name);
 
   // Get skill tree (use default if not provided)
@@ -117,14 +110,11 @@ const HeroSelection = () => {
     ? currentHero.skillTree
     : DEFAULT_SKILL_TREE;
 
-  const actionButtons = [
-    { id: "prev", label: "Héroe Anterior", icon: "◂", onClick: handlePrevHero },
-    { id: "select", label: "Seleccionar", icon: "✓", onClick: handleSelectHero },
-    { id: "next", label: "Héroe Siguiente", icon: "▸", onClick: handleNextHero },
-  ];
-
   // Parse description with line breaks
   const descriptionParagraphs = currentHero.description.split(/\\n\\n|\n\n/).filter(p => p.trim());
+
+  // Calculate remaining players
+  const remainingPlayers = gameState.players.length - gameState.currentPlayerIndex;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -154,7 +144,7 @@ const HeroSelection = () => {
               {/* Hero counter */}
               <div className="text-center pb-2">
                 <span className="font-display text-sm text-muted-foreground">
-                  — {currentHeroIndex + 1} de {availableHeroes.length} —
+                  — {currentHeroIndex + 1} de {heroes.length} —
                 </span>
               </div>
             </div>
@@ -206,7 +196,7 @@ const HeroSelection = () => {
 
                 {/* Players remaining info */}
                 <div className="text-center mt-4 text-muted-foreground font-body text-sm italic">
-                  {gameState.players.length - gameState.currentPlayerIndex} jugadores por elegir
+                  {remainingPlayers} jugador{remainingPlayers !== 1 ? 'es' : ''} por elegir
                 </div>
               </div>
 
@@ -231,13 +221,19 @@ const HeroSelection = () => {
             <span>Héroe Anterior</span>
           </button>
 
-          {/* 2. Seleccionar - with glow and shake animation */}
+          {/* 2. Seleccionar - with glow animation */}
           <button
+            ref={selectButtonRef}
             onClick={handleSelectHero}
-            className="btn-vintage rounded-sm flex items-center gap-2 btn-select-cta"
+            disabled={isHeroSelected || isSelectAnimating}
+            className={`btn-vintage rounded-sm flex items-center gap-2 relative overflow-hidden ${
+              isHeroSelected 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'btn-select-cta'
+            } ${isSelectAnimating ? 'btn-ripple-active' : ''}`}
           >
-            <span>✓</span>
-            <span>Seleccionar</span>
+            <span>{isHeroSelected ? '✗' : '✓'}</span>
+            <span>{isHeroSelected ? 'Ya Seleccionado' : 'Seleccionar'}</span>
           </button>
 
           {/* 3. Atributos y Progreso */}

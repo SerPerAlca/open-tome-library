@@ -1,17 +1,36 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "@/context/GameContext";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
 import ActionButtons from "@/components/ActionButtons";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
-import { HEROES } from "@/types/game";
+import { useHeroesAPI } from "@/hooks/useHeroesAPI";
+import { toTitleCase } from "@/types/hero-api";
 
 const SelectionComplete = () => {
   const navigate = useNavigate();
-  const { gameState, getAssignedHeroes } = useGame();
+  const { gameState, getSelectedHeroCodes } = useGame();
   const { animationState, isAnimating, turnPageForward } = usePageAnimation();
+  const { heroes } = useHeroesAPI();
 
-  const assignedHeroes = getAssignedHeroes();
+  // Build assigned heroes from gameState and API data
+  const assignedHeroes = useMemo(() => {
+    if (!gameState || heroes.length === 0) return [];
+    
+    return gameState.players
+      .filter(p => p.heroId)
+      .map(player => {
+        const hero = heroes.find(h => h.code === player.heroId);
+        return {
+          player,
+          hero: hero ? { 
+            name: toTitleCase(hero.name), 
+            alias: hero.alias,
+            code: hero.code 
+          } : { name: player.heroId || 'Desconocido', alias: '', code: '' }
+        };
+      });
+  }, [gameState, heroes]);
 
   // Redirect if no game state or selection not complete
   useEffect(() => {
