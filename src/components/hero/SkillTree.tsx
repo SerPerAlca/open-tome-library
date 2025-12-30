@@ -37,12 +37,13 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
         ✦ Árbol de Habilidades ✦
       </h4>
       
-      <TooltipProvider delayDuration={100}>
+      <TooltipProvider delayDuration={0}>
         <svg
           width="100%"
           height={maxY}
           viewBox={`0 0 ${maxX} ${maxY}`}
           className="overflow-visible"
+          style={{ pointerEvents: "none" }}
         >
           {/* Connections */}
           {nodes.map(node => {
@@ -79,20 +80,33 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                     onMouseEnter={() => setHoveredNode(node.id)}
                     onMouseLeave={() => setHoveredNode(null)}
                     className="cursor-pointer"
+                    style={{ pointerEvents: "all" }}
                   >
-                    {/* Glow effect */}
+                    {/* Outer glow ring - always visible but more prominent on hover */}
+                    <circle
+                      cx={coords.x}
+                      cy={coords.y}
+                      r={NODE_RADIUS + 8}
+                      fill="none"
+                      stroke="hsl(43 70% 55%)"
+                      strokeWidth={isHovered ? 3 : 0}
+                      className={isHovered ? "skill-node-glow" : ""}
+                      style={{
+                        filter: isHovered ? "drop-shadow(0 0 12px hsl(43 70% 55%)) drop-shadow(0 0 20px hsl(43 70% 45%))" : "none",
+                        transition: "all 0.2s ease",
+                      }}
+                    />
+                    
+                    {/* Pulse ring animation on hover */}
                     {isHovered && (
                       <circle
                         cx={coords.x}
                         cy={coords.y}
-                        r={NODE_RADIUS + 6}
+                        r={NODE_RADIUS + 4}
                         fill="none"
-                        stroke="hsl(43 70% 55%)"
+                        stroke="hsl(43 70% 60%)"
                         strokeWidth="2"
-                        className="animate-pulse"
-                        style={{
-                          filter: "drop-shadow(0 0 8px hsl(43 70% 55%))",
-                        }}
+                        className="skill-node-pulse"
                       />
                     )}
                     
@@ -101,22 +115,28 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                       cx={coords.x}
                       cy={coords.y}
                       r={NODE_RADIUS}
-                      fill={isHovered ? "hsl(43 70% 45%)" : "hsl(25 45% 22%)"}
+                      fill={isHovered ? "hsl(43 70% 50%)" : "hsl(25 45% 22%)"}
                       stroke="hsl(43 70% 45%)"
-                      strokeWidth="2"
+                      strokeWidth="2.5"
                       style={{
                         transition: "all 0.2s ease",
-                        filter: isHovered ? "drop-shadow(0 0 6px hsl(43 70% 55%))" : "none",
+                        filter: isHovered ? "drop-shadow(0 0 10px hsl(43 70% 55%))" : "none",
+                        transform: isHovered ? `scale(1.1)` : "scale(1)",
+                        transformOrigin: `${coords.x}px ${coords.y}px`,
                       }}
                     />
                     
                     {/* Node label */}
                     <text
                       x={coords.x}
-                      y={coords.y + NODE_RADIUS + 14}
+                      y={coords.y + NODE_RADIUS + 16}
                       textAnchor="middle"
-                      className="font-body text-xs fill-current"
-                      style={{ fill: "hsl(43 70% 45%)" }}
+                      className="font-body fill-current"
+                      style={{ 
+                        fill: "hsl(43 70% 45%)",
+                        fontSize: "11px",
+                        fontWeight: 500,
+                      }}
                     >
                       {node.label}
                     </text>
@@ -124,9 +144,11 @@ const SkillTree = ({ nodes }: SkillTreeProps) => {
                 </TooltipTrigger>
                 <TooltipContent
                   side="top"
-                  className="bg-spine text-gold border-gold/50 font-body"
+                  sideOffset={8}
+                  className="bg-spine text-gold border-gold/50 font-body z-[9999] pointer-events-none"
+                  style={{ zIndex: 9999 }}
                 >
-                  <p>{node.tooltip}</p>
+                  <p className="text-sm">{node.tooltip}</p>
                 </TooltipContent>
               </Tooltip>
             );

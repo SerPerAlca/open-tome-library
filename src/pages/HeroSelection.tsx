@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "@/context/GameContext";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
-import ActionButtons from "@/components/ActionButtons";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
 import { useHeroesAPI } from "@/hooks/useHeroesAPI";
 import { formatHeroName, toTitleCase, DEFAULT_SKILL_TREE } from "@/types/hero-api";
@@ -194,7 +193,7 @@ const HeroSelection = () => {
                   {descriptionParagraphs.map((paragraph, index) => (
                     <p
                       key={index}
-                      className={`font-body text-base leading-relaxed text-foreground/90 text-justify mb-4 ${
+                      className={`font-body text-lg leading-relaxed text-foreground/90 text-justify mb-4 ${
                         index === 0
                           ? "first-letter:text-4xl first-letter:font-display first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-none"
                           : ""
@@ -223,24 +222,40 @@ const HeroSelection = () => {
       {/* Action buttons area */}
       <footer className="py-4 px-6 bg-secondary/90 border-t-2 border-gold/30">
         <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
-          {actionButtons.map((button) => (
-            <button
-              key={button.id}
-              onClick={button.onClick}
-              className="btn-vintage rounded-sm flex items-center gap-2"
-            >
-              {button.icon && <span>{button.icon}</span>}
-              <span>{button.label}</span>
-            </button>
-          ))}
-          
-          {/* Attributes Popover Button */}
+          {/* 1. Héroe Anterior */}
+          <button
+            onClick={handlePrevHero}
+            className="btn-vintage rounded-sm flex items-center gap-2"
+          >
+            <span>◂</span>
+            <span>Héroe Anterior</span>
+          </button>
+
+          {/* 2. Seleccionar - with glow and shake animation */}
+          <button
+            onClick={handleSelectHero}
+            className="btn-vintage rounded-sm flex items-center gap-2 btn-select-cta"
+          >
+            <span>✓</span>
+            <span>Seleccionar</span>
+          </button>
+
+          {/* 3. Atributos y Progreso */}
           <AttributesPopover stats={currentHero.baseStats} skillTree={skillTree}>
             <button className="btn-vintage rounded-sm flex items-center gap-2 bg-gradient-to-b from-burgundy to-spine border-gold/60">
               <span>◈</span>
               <span>Atributos y Progreso</span>
             </button>
           </AttributesPopover>
+
+          {/* 4. Héroe Siguiente */}
+          <button
+            onClick={handleNextHero}
+            className="btn-vintage rounded-sm flex items-center gap-2"
+          >
+            <span>▸</span>
+            <span>Héroe Siguiente</span>
+          </button>
         </div>
       </footer>
     </div>
