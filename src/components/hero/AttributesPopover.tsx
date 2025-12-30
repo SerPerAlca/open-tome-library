@@ -24,7 +24,8 @@ const AttributesPopover = ({ stats, skillTree, children }: AttributesPopoverProp
         side="top"
         align="center"
         sideOffset={12}
-        className="w-[600px] max-w-[90vw] p-0 border-2 border-gold/50 bg-transparent"
+        className="w-[600px] max-w-[90vw] p-0 border-2 border-gold/50 bg-transparent z-50"
+        style={{ zIndex: 50 }}
       >
         <div className="paper-texture paper-aged rounded-sm overflow-hidden">
           {/* Header */}
