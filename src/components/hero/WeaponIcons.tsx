@@ -59,16 +59,21 @@ const WeaponIcons = ({ weapons }: WeaponIconsProps) => {
           return (
             <Tooltip key={weapon.code}>
               <TooltipTrigger asChild>
-              <div className="cursor-pointer hover:scale-110 transition-transform">
+                <button 
+                  type="button"
+                  title={weapon.description}
+                  className="cursor-help hover:scale-110 transition-transform focus:outline-none"
+                >
                   <IconComponent 
                     className="text-amber-600 drop-shadow-sm"
                     size={28}
                   />
-                </div>
+                </button>
               </TooltipTrigger>
               <TooltipContent 
                 side="bottom" 
-                className="bg-background/95 border-gold/50 text-foreground"
+                sideOffset={8}
+                className="z-[100] bg-background/95 border-gold/50 text-foreground"
               >
                 <span className="font-body text-sm">{weapon.description}</span>
               </TooltipContent>
