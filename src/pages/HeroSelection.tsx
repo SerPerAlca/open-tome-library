@@ -7,6 +7,7 @@ import { useHeroesAPI } from "@/hooks/useHeroesAPI";
 import { formatHeroName, toTitleCase, DEFAULT_SKILL_TREE } from "@/types/hero-api";
 import HeroImage from "@/components/hero/HeroImage";
 import AttributesPopover from "@/components/hero/AttributesPopover";
+import WeaponIcons from "@/components/hero/WeaponIcons";
 
 const HeroSelection = () => {
   const navigate = useNavigate();
@@ -202,10 +203,16 @@ const HeroSelection = () => {
                   <h2 className="font-display text-2xl md:text-3xl text-primary mb-1">
                     {heroTitleName}
                   </h2>
-                  <p className="font-body text-base text-muted-foreground italic mb-1">
+                  <p className="font-body text-base text-muted-foreground italic">
                     {currentHero.alias}
                   </p>
-                  <div className="divider-ornament mx-auto max-w-xs" />
+                  
+                  {/* Weapon mastery icons */}
+                  {currentHero.weaponsTypes && currentHero.weaponsTypes.length > 0 && (
+                    <WeaponIcons weapons={currentHero.weaponsTypes} />
+                  )}
+                  
+                  <div className="divider-ornament mx-auto max-w-xs mt-2" />
                 </div>
 
                 {/* Description with line breaks - contained within book */}
