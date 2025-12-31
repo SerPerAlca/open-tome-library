@@ -19,6 +19,11 @@ export interface BaseStats {
   movement: number;
 }
 
+export interface WeaponType {
+  code: string;
+  description: string;
+}
+
 export interface HeroAPIResponse {
   code: string;
   name: string;
@@ -28,6 +33,7 @@ export interface HeroAPIResponse {
   specieDescription: string;
   baseStats: BaseStats;
   skillTree?: SkillTreeNode[];
+  weaponsTypes?: WeaponType[];
 }
 
 // Default skill tree for testing when API doesn't provide one
