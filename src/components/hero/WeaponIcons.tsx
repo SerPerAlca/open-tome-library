@@ -1,17 +1,17 @@
-import { 
-  Sword, 
-  Swords, 
-  Scissors, 
-  Axe, 
-  Gavel, 
-  Hammer, 
-  ArrowUpRight, 
-  Target, 
-  Wand2, 
-  Crosshair, 
-  Zap,
-  LucideIcon
-} from "lucide-react";
+import { IconType } from "react-icons";
+import {
+  GiBroadsword,
+  GiTwoHandedSword,
+  GiPlainDagger,
+  GiBattleAxe,
+  GiThorHammer,
+  GiFlangedMace,
+  GiTrident,
+  GiHighShot,
+  GiWizardStaff,
+  GiCrossedPistols,
+  GiMusket,
+} from "react-icons/gi";
 import {
   Tooltip,
   TooltipContent,
@@ -24,18 +24,18 @@ export interface WeaponType {
   description: string;
 }
 
-const WEAPON_ICONS: Record<string, LucideIcon> = {
-  SWD: Sword,
-  "2HS": Swords,
-  DGR: Scissors,
-  AXE: Axe,
-  MCE: Gavel,
-  "2MC": Hammer,
-  SPR: ArrowUpRight,
-  BOW: Target,
-  STF: Wand2,
-  HGN: Crosshair,
-  LGN: Zap,
+const WEAPON_ICONS: Record<string, IconType> = {
+  SWD: GiBroadsword,
+  "2HS": GiTwoHandedSword,
+  DGR: GiPlainDagger,
+  AXE: GiBattleAxe,
+  MCE: GiThorHammer,
+  "2MC": GiFlangedMace,
+  SPR: GiTrident,
+  BOW: GiHighShot,
+  STF: GiWizardStaff,
+  HGN: GiCrossedPistols,
+  LGN: GiMusket,
 };
 
 interface WeaponIconsProps {
@@ -59,10 +59,10 @@ const WeaponIcons = ({ weapons }: WeaponIconsProps) => {
           return (
             <Tooltip key={weapon.code}>
               <TooltipTrigger asChild>
-                <div className="cursor-pointer hover:scale-110 transition-transform">
+              <div className="cursor-pointer hover:scale-110 transition-transform">
                   <IconComponent 
-                    className="w-5 h-5 text-amber-600 drop-shadow-sm" 
-                    strokeWidth={1.5}
+                    className="text-amber-600 drop-shadow-sm"
+                    size={28}
                   />
                 </div>
               </TooltipTrigger>
