@@ -1,12 +1,11 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import BookMenu from "@/components/BookMenu";
 import ImageDisplay from "@/components/ImageDisplay";
 import ActionButtons from "@/components/ActionButtons";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
-import ChapterContent from "@/components/ChapterContent";
-import { useChapter } from "@/hooks/useChapter";
+import SceneContent from "@/components/SceneContent";
+import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
-import manuscriptIllustration from "@/assets/manuscript-illustration.jpg";
 
 const menuItems = [
   { id: "chapter-1", label: "Capítulo I: El Inicio", icon: "§" },
@@ -16,47 +15,40 @@ const menuItems = [
 ];
 
 const Book = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Data fetching hook
+  // Game engine hook
   const {
-    chapter,
-    additionalContent,
+    currentScene,
+    accumulatedText,
+    currentChoices,
     isLoading,
-    isLoadingAdditional,
-    loadChapter,
-    loadAdditionalContent,
-  } = useChapter("chapter-1");
+    error,
+    currentImageUrl,
+    handleChoiceSelect,
+    goToNextScene,
+    canGoNext,
+  } = useGameEngine(1);
 
   // Page animation hook
   const { animationState, isAnimating, turnPageForward, turnPageBackward } = usePageAnimation();
 
   const handleMenuSelect = useCallback((id: string) => {
-    loadChapter(id);
-  }, [loadChapter]);
-
-  const handleClickableText = useCallback((endpoint: string) => {
-    loadAdditionalContent(endpoint);
-  }, [loadAdditionalContent]);
+    // TODO: Implement chapter navigation via menu
+    console.log("Menu selected:", id);
+  }, []);
 
   const handleNextPage = useCallback(async () => {
-    if (isAnimating) return;
+    if (isAnimating || !canGoNext) return;
 
     await turnPageForward();
-    setCurrentPage((prev) => prev + 2);
-
-    // TODO: Load next chapter content after animation
-    // loadChapter(`chapter-${Math.ceil((currentPage + 2) / 2)}`);
-  }, [isAnimating, turnPageForward]);
+    goToNextScene();
+  }, [isAnimating, canGoNext, turnPageForward, goToNextScene]);
 
   const handlePrevPage = useCallback(async () => {
-    if (isAnimating || currentPage <= 1) return;
+    if (isAnimating) return;
 
     await turnPageBackward();
-    setCurrentPage((prev) => Math.max(1, prev - 2));
-
-    // TODO: Load previous chapter content after animation
-  }, [isAnimating, currentPage, turnPageBackward]);
+    // TODO: Implement previous scene navigation
+  }, [isAnimating, turnPageBackward]);
 
   const handleIndex = useCallback(() => {
     // TODO: Implement index navigation
@@ -66,15 +58,8 @@ const Book = () => {
   const actionButtons = [
     { id: "prev", label: "Página Anterior", icon: "◂", onClick: handlePrevPage },
     { id: "index", label: "Índice General", icon: "☰", onClick: handleIndex },
-    { id: "next", label: "Página Siguiente", icon: "▸", onClick: handleNextPage },
+    { id: "next", label: "Página Siguiente", icon: "▸", onClick: handleNextPage, disabled: !canGoNext },
   ];
-
-  // Use chapter image or fallback to default
-  const currentImage = chapter?.image || {
-    src: manuscriptIllustration,
-    alt: "Ilustración medieval de un castillo",
-    caption: "Lámina I: Vista del Castillo en la Colina",
-  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -98,18 +83,27 @@ const Book = () => {
                   <div className="font-body text-muted-foreground italic animate-pulse">
                     Cargando ilustración...
                   </div>
-                ) : (
+                ) : error ? (
+                  <div className="font-body text-destructive italic">
+                    {error}
+                  </div>
+                ) : currentImageUrl ? (
                   <ImageDisplay
-                    src={currentImage.src}
-                    alt={currentImage.alt}
-                    caption={currentImage.caption}
+                    src={currentImageUrl}
+                    alt={`Escena ${currentScene?.id || ""}`}
                   />
+                ) : (
+                  <div className="font-body text-muted-foreground italic">
+                    Sin ilustración disponible
+                  </div>
                 )}
               </div>
 
               {/* Page number */}
               <div className="text-center mt-4">
-                <span className="font-display text-sm text-muted-foreground">— {currentPage} —</span>
+                <span className="font-display text-sm text-muted-foreground">
+                  — {currentScene?.id || 1} —
+                </span>
               </div>
             </div>
           </AnimatedBookPage>
@@ -122,15 +116,21 @@ const Book = () => {
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="font-body text-muted-foreground italic animate-pulse">
-                    Cargando capítulo...
+                    Cargando escena...
                   </div>
                 </div>
-              ) : chapter ? (
-                <ChapterContent
-                  chapter={chapter}
-                  additionalContent={additionalContent}
-                  onClickableTextClick={handleClickableText}
-                  isLoadingAdditional={isLoadingAdditional}
+              ) : error ? (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="font-body text-destructive italic">
+                    {error}
+                  </div>
+                </div>
+              ) : currentScene ? (
+                <SceneContent
+                  textParagraphs={accumulatedText}
+                  choices={currentChoices}
+                  onChoiceSelect={handleChoiceSelect}
+                  className="flex-1"
                 />
               ) : (
                 <div className="flex-1 flex items-center justify-center">
@@ -142,7 +142,9 @@ const Book = () => {
 
               {/* Page number */}
               <div className="text-center mt-4">
-                <span className="font-display text-sm text-muted-foreground">— {currentPage + 1} —</span>
+                <span className="font-display text-sm text-muted-foreground">
+                  — {(currentScene?.id || 1) + 1} —
+                </span>
               </div>
             </div>
           </AnimatedBookPage>

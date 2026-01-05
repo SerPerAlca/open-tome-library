@@ -5,6 +5,7 @@ interface ActionButton {
   label: string;
   icon?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 interface ActionButtonsProps {
@@ -24,7 +25,11 @@ const ActionButtons = ({ buttons, className }: ActionButtonsProps) => {
         <button
           key={button.id}
           onClick={button.onClick}
-          className="btn-vintage rounded-sm flex items-center gap-2"
+          disabled={button.disabled}
+          className={cn(
+            "btn-vintage rounded-sm flex items-center gap-2",
+            button.disabled && "opacity-50 cursor-not-allowed"
+          )}
         >
           {button.icon && <span>{button.icon}</span>}
           <span>{button.label}</span>
