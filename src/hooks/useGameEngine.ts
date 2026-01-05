@@ -179,9 +179,10 @@ export const useGameEngine = (chapterId: number = 1) => {
   }, [state, navigateToScene]);
 
   // Check if next page navigation is allowed
+  // Only disable when there are choices - nextSceneId being null is handled in goToNextScene
   const canGoNext = useCallback((): boolean => {
-    const { currentScene, currentChoices } = state;
-    return currentChoices.length === 0 && !!currentScene?.nextSceneId;
+    const { currentChoices } = state;
+    return currentChoices.length === 0;
   }, [state]);
 
   return {

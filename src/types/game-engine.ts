@@ -26,6 +26,8 @@ export interface Scene {
   nextSceneId?: number;
   sceneType?: string;
   sceneText: string;
+  chapterDescription?: string;
+  sceneLocation?: string;
   choices: Choice[];
   images: SceneImage[];
 }

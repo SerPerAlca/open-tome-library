@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
-import { Choice } from "@/types/game-engine";
+import { Choice, Scene } from "@/types/game-engine";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SceneContentProps {
+  scene: Scene | null;
   textParagraphs: string[];
   choices: Choice[];
   onChoiceSelect: (choice: Choice) => void;
@@ -10,6 +11,7 @@ interface SceneContentProps {
 }
 
 const SceneContent = ({
+  scene,
   textParagraphs,
   choices,
   onChoiceSelect,
@@ -17,15 +19,37 @@ const SceneContent = ({
 }: SceneContentProps) => {
   return (
     <div className={cn("flex flex-col h-full", className)}>
+      {/* Decorative Header */}
+      {scene && (scene.chapterDescription || scene.sceneLocation) && (
+        <header className="text-center mb-6">
+          <div className="divider-ornament mb-4">
+            <span className="text-gold">✦</span>
+          </div>
+          {scene.chapterDescription && (
+            <h1 className="font-display text-2xl md:text-3xl text-ink mb-2">
+              {scene.chapterDescription}
+            </h1>
+          )}
+          {scene.sceneLocation && (
+            <p className="font-display text-lg text-burgundy italic">
+              {scene.sceneLocation}
+            </p>
+          )}
+          <div className="divider-ornament mt-4">
+            <span className="text-gold">✦</span>
+          </div>
+        </header>
+      )}
+
       <ScrollArea className="flex-1 pr-4">
         <div className="space-y-4">
-          {/* Scene text paragraphs */}
+          {/* Scene text paragraphs - increased font size */}
           {textParagraphs.map((paragraph, index) => (
             <p
               key={index}
               className={cn(
-                "font-body text-foreground leading-relaxed",
-                index === 0 && "first-letter:font-display first-letter:text-4xl first-letter:float-left first-letter:mr-2 first-letter:text-gold first-letter:leading-none"
+                "font-body text-lg md:text-xl text-foreground leading-relaxed",
+                index === 0 && "first-letter:font-display first-letter:text-5xl first-letter:float-left first-letter:mr-2 first-letter:text-gold first-letter:leading-none"
               )}
             >
               {paragraph}
