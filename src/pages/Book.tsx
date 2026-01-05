@@ -127,6 +127,7 @@ const Book = () => {
                 </div>
               ) : currentScene ? (
                 <SceneContent
+                  scene={currentScene}
                   textParagraphs={accumulatedText}
                   choices={currentChoices}
                   onChoiceSelect={handleChoiceSelect}
