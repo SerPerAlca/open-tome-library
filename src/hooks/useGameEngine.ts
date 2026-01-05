@@ -3,7 +3,7 @@ import axios from "axios";
 import { Scene, Choice, GameEngineState } from "@/types/game-engine";
 
 const API_BASE_URL = "http://localhost:8081";
-const IMAGES_BASE_URL = "http://localhost:8082";
+const SCENE_IMAGES_BASE_URL = "http://localhost:8081";
 
 export const useGameEngine = (chapterId: number = 1) => {
   const [state, setState] = useState<GameEngineState>({
@@ -114,7 +114,7 @@ export const useGameEngine = (chapterId: number = 1) => {
     if (!image) return null;
 
     // Prepend base URL to relative path
-    return `${IMAGES_BASE_URL}${image.path}`;
+    return `${SCENE_IMAGES_BASE_URL}${image.path}`;
   }, [state]);
 
   // Navigate to a specific scene by ID
