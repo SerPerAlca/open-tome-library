@@ -73,9 +73,9 @@ const WeaponIcons = ({ weapons }: WeaponIconsProps) => {
               <TooltipContent 
                 side="bottom" 
                 sideOffset={8}
-                className="z-[100] bg-background/95 border-gold/50 text-foreground"
+                className="z-[9999] bg-popover border-gold/50 text-popover-foreground shadow-lg"
               >
-                <span className="font-body text-sm">{weapon.description}</span>
+                <span className="font-body text-sm font-medium">{weapon.description.toUpperCase()}</span>
               </TooltipContent>
             </Tooltip>
           );
