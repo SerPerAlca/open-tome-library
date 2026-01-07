@@ -44,15 +44,15 @@ const Index = () => {
 
           {/* Main title */}
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-gold mb-4 drop-shadow-lg tracking-wide">
-            Crónicas
+            Eternum
           </h1>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-gold/90 mb-6 drop-shadow-md tracking-widest">
-            del Reino Olvidado
+            El Final de los Tiempos
           </h2>
 
           {/* Subtitle */}
           <p className="font-body text-lg md:text-xl text-foreground/80 italic max-w-md mx-auto">
-            Un viaje épico a través de tierras de fantasía
+            Un viaje épico a través de tierras de sangre y magia
           </p>
 
           {/* Decorative bottom ornament */}

@@ -117,7 +117,7 @@ const SelectionComplete = () => {
                 <div className="text-gold text-4xl mb-6">⚔</div>
 
                 <h1 className="font-display text-3xl md:text-4xl text-primary mb-4">
-                  La Aventura Aguarda
+                  El Mundo de Eternum Aguarda
                 </h1>
 
                 <p className="font-body text-lg text-foreground/80 italic leading-relaxed mb-6">
@@ -128,9 +128,9 @@ const SelectionComplete = () => {
 
                 <div className="divider-ornament mx-auto max-w-xs mb-4" />
 
-                <p className="font-body text-sm text-muted-foreground">
+               {/*  <p className="font-body text-sm text-muted-foreground">
                   Pasad la página para comenzar el Capítulo I
-                </p>
+                </p> */}
               </div>
             </div>
           </AnimatedBookPage>

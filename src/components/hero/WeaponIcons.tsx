@@ -50,7 +50,7 @@ const WeaponIcons = ({ weapons }: WeaponIconsProps) => {
       <div className="flex items-center justify-center gap-3 mt-1">
         {weapons.map((weapon) => {
           const IconComponent = WEAPON_ICONS[weapon.code];
-          
+
           if (!IconComponent) {
             console.warn(`No icon found for weapon code: ${weapon.code}`);
             return null;
@@ -59,19 +59,19 @@ const WeaponIcons = ({ weapons }: WeaponIconsProps) => {
           return (
             <Tooltip key={weapon.code}>
               <TooltipTrigger asChild>
-                <button 
+                <button
                   type="button"
                   title={weapon.description}
                   className="cursor-help hover:scale-110 transition-transform focus:outline-none"
                 >
-                  <IconComponent 
+                  <IconComponent
                     className="text-amber-600 drop-shadow-sm"
                     size={28}
                   />
                 </button>
               </TooltipTrigger>
-              <TooltipContent 
-                side="bottom" 
+              <TooltipContent
+                side="bottom"
                 sideOffset={8}
                 className="z-[9999] bg-popover border-gold/50 text-popover-foreground shadow-lg"
               >

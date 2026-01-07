@@ -74,8 +74,8 @@ const SceneContent = ({
                       "cursor-pointer"
                     )}
                   >
-                    <span className="text-gold mr-2">▸</span>
-                    {choice.choiceText}
+                    <span className="text-gold  mr-2">▸</span>
+                    <span className="text-xl">{choice.choiceText}</span>
                   </button>
                 ))}
               </div>

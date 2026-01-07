@@ -64,6 +64,9 @@ const PlayerConfig = () => {
             <p className="font-body text-center text-muted-foreground italic mb-6">
               ¿Cuántos valientes emprenderán esta aventura?
             </p>
+            <p className="font-body text-center text-muted-foreground italic mb-6">
+              (El jugador Master no cuenta como jugador activo de la aventura)
+            </p>
 
             <div className="flex justify-center gap-4 flex-wrap">
               {[2, 3, 4, 5, 6].map((count) => (
