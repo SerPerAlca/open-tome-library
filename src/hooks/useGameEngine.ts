@@ -81,17 +81,19 @@ export const useGameEngine = (chapterId: number = 1) => {
     if (!currentImage) return;
 
     // If current image has a timeout and there are more images, set up the transition
+    // IMPORTANT: timeOut in JSON is in SECONDS, setTimeout uses MILLISECONDS
     if (
       currentImage.timeOut &&
       currentImage.timeOut > 0 &&
       currentImageIndex < sortedImages.length - 1
     ) {
+      const timeoutMs = currentImage.timeOut * 1000; // Convert seconds to milliseconds
       imageTimeoutRef.current = setTimeout(() => {
         setState((prev) => ({
           ...prev,
           currentImageIndex: prev.currentImageIndex + 1,
         }));
-      }, currentImage.timeOut);
+      }, timeoutMs);
     }
 
     return () => {
