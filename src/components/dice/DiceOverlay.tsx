@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Die from "./Die";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ const DiceOverlay = ({ isOpen, onClose }: DiceOverlayProps) => {
   const [dice, setDice] = useState<[number, number]>([1, 1]);
   const [rolling, setRolling] = useState(false);
   const [canClose, setCanClose] = useState(false);
+  const hasRolledRef = useRef(false);
 
   const rollDice = useCallback(() => {
     if (rolling) return;
@@ -31,20 +32,24 @@ const DiceOverlay = ({ isOpen, onClose }: DiceOverlayProps) => {
     }, 1500);
   }, [rolling]);
 
-  // Auto-roll when overlay opens
+  // Auto-roll ONCE when overlay opens
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !hasRolledRef.current) {
+      hasRolledRef.current = true;
       // Small delay to let overlay appear first
       const timer = setTimeout(() => {
         rollDice();
       }, 300);
       return () => clearTimeout(timer);
-    } else {
-      // Reset state when closed
+    }
+    
+    // Reset ref when overlay closes
+    if (!isOpen) {
+      hasRolledRef.current = false;
       setCanClose(false);
       setRolling(false);
     }
-  }, [isOpen, rollDice]);
+  }, [isOpen]); // Remove rollDice from dependencies
 
   const handleBackdropClick = () => {
     if (canClose) {
