@@ -12,14 +12,16 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
   const [transform, setTransform] = useState("rotateX(0deg) rotateY(0deg)");
   const [useTransition, setUseTransition] = useState(false);
 
-  // Base rotations to show each face
+  // Base rotations to show each face (matching the cube's HTML structure)
+  // Face positions: 1=front, 6=back(Y180), 2=right(Y90), 5=left(Y-90), 3=top(X90), 4=bottom(X-90)
+  // To SHOW a face, we rotate the cube in the OPPOSITE direction
   const faceRotations: Record<number, { x: number; y: number }> = {
-    1: { x: 0, y: 0 },
-    2: { x: 0, y: -90 },
-    3: { x: -90, y: 0 },
-    4: { x: 90, y: 0 },
-    5: { x: 0, y: 90 },
-    6: { x: 180, y: 0 },
+    1: { x: 0, y: 0 },       // Front face - no rotation needed
+    2: { x: 0, y: -90 },     // Right face - rotate Y left
+    3: { x: -90, y: 0 },     // Top face - rotate X down
+    4: { x: 90, y: 0 },      // Bottom face - rotate X up
+    5: { x: 0, y: 90 },      // Left face - rotate Y right
+    6: { x: 0, y: 180 },     // Back face - rotate Y 180 (NOT X!)
   };
 
   useEffect(() => {

@@ -11,6 +11,7 @@ const DiceOverlay = ({ isOpen, onClose }: DiceOverlayProps) => {
   const [dice, setDice] = useState<[number, number]>([1, 1]);
   const [rolling, setRolling] = useState(false);
   const [canClose, setCanClose] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const hasRolledRef = useRef(false);
 
   const rollDice = useCallback(() => {
@@ -18,18 +19,23 @@ const DiceOverlay = ({ isOpen, onClose }: DiceOverlayProps) => {
 
     setRolling(true);
     setCanClose(false);
+    setShowResult(false);
 
-    // Generate random values
+    // Generate random values immediately
     const die1 = Math.floor(Math.random() * 6) + 1;
     const die2 = Math.floor(Math.random() * 6) + 1;
+    
+    // Set dice values immediately so animation targets correct faces
+    setDice([die1, die2]);
 
-    // After animation completes, show final values
+    // Animation duration is 2s, then wait 1s more for dramatic pause
+    // Total: 3 seconds before showing result text
     setTimeout(() => {
-      setDice([die1, die2]);
       setRolling(false);
+      setShowResult(true);
       setCanClose(true);
       console.log(`Resultado: [${die1}, ${die2}] - Total: ${die1 + die2}`);
-    }, 1500);
+    }, 3000); // 2s animation + 1s pause
   }, [rolling]);
 
   // Auto-roll ONCE when overlay opens
@@ -48,6 +54,7 @@ const DiceOverlay = ({ isOpen, onClose }: DiceOverlayProps) => {
       hasRolledRef.current = false;
       setCanClose(false);
       setRolling(false);
+      setShowResult(false);
     }
   }, [isOpen]); // Remove rollDice from dependencies
 
@@ -80,11 +87,11 @@ const DiceOverlay = ({ isOpen, onClose }: DiceOverlayProps) => {
           <Die value={dice[1]} rolling={rolling} delay={100} />
         </div>
 
-        {/* Result display */}
+        {/* Result display - appears 1s after dice stop */}
         <div
           className={cn(
             "text-center transition-opacity duration-500",
-            rolling ? "opacity-0" : "opacity-100"
+            showResult ? "opacity-100" : "opacity-0"
           )}
         >
           <p className="font-display text-2xl text-amber-100 drop-shadow-lg">
