@@ -1,9 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import BookMenu from "@/components/BookMenu";
 import ImageDisplay from "@/components/ImageDisplay";
 import ActionButtons from "@/components/ActionButtons";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
 import SceneContent from "@/components/SceneContent";
+import DiceOverlay from "@/components/dice/DiceOverlay";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
 
@@ -15,6 +16,9 @@ const menuItems = [
 ];
 
 const Book = () => {
+  // Dice overlay state
+  const [showDice, setShowDice] = useState(false);
+
   // Game engine hook
   const {
     currentScene,
@@ -29,7 +33,7 @@ const Book = () => {
   } = useGameEngine(1);
 
   // Page animation hook
-  const { animationState, isAnimating, turnPageForward, turnPageBackward } = usePageAnimation();
+  const { animationState, isAnimating, turnPageForward } = usePageAnimation();
 
   const handleMenuSelect = useCallback((id: string) => {
     // TODO: Implement chapter navigation via menu
@@ -43,12 +47,9 @@ const Book = () => {
     goToNextScene();
   }, [isAnimating, canGoNext, turnPageForward, goToNextScene]);
 
-  const handlePrevPage = useCallback(async () => {
-    if (isAnimating) return;
-
-    await turnPageBackward();
-    // TODO: Implement previous scene navigation
-  }, [isAnimating, turnPageBackward]);
+  const handleDiceRoll = useCallback(() => {
+    setShowDice(true);
+  }, []);
 
   const handleIndex = useCallback(() => {
     // TODO: Implement index navigation
@@ -56,7 +57,7 @@ const Book = () => {
   }, []);
 
   const actionButtons = [
-    { id: "prev", label: "Página Anterior", icon: "◂", onClick: handlePrevPage },
+    { id: "dice", label: "Lanzar Dados", icon: "🎲", onClick: handleDiceRoll },
     { id: "index", label: "Índice General", icon: "☰", onClick: handleIndex },
     { id: "next", label: "Página Siguiente", icon: "▸", onClick: handleNextPage, disabled: !canGoNext },
   ];
@@ -156,6 +157,9 @@ const Book = () => {
       <footer className="py-4 px-6 bg-secondary/90 border-t-2 border-gold/30">
         <ActionButtons buttons={actionButtons} />
       </footer>
+
+      {/* Dice overlay */}
+      <DiceOverlay isOpen={showDice} onClose={() => setShowDice(false)} />
     </div>
   );
 };
