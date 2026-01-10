@@ -1,5 +1,4 @@
-import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface DieProps {
   value: number;
@@ -8,10 +7,12 @@ interface DieProps {
 }
 
 const Die = ({ value, rolling, delay = 0 }: DieProps) => {
-  const [currentRotation, setCurrentRotation] = useState({ x: 0, y: 0 });
-  const [isAnimating, setIsAnimating] = useState(false);
+  // Track accumulated rotation to make spins continuous
+  const accumulatedRotation = useRef({ x: 0, y: 0 });
+  const [transform, setTransform] = useState("rotateX(0deg) rotateY(0deg)");
+  const [useTransition, setUseTransition] = useState(false);
 
-  // Each face needs specific rotation to show the correct number
+  // Base rotations to show each face
   const faceRotations: Record<number, { x: number; y: number }> = {
     1: { x: 0, y: 0 },
     2: { x: 0, y: -90 },
@@ -23,31 +24,30 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
 
   useEffect(() => {
     if (rolling) {
-      // Start animation after delay
-      const startTimer = setTimeout(() => {
-        setIsAnimating(true);
+      const timer = setTimeout(() => {
+        // Enable transition for smooth animation
+        setUseTransition(true);
+
+        // Get target face rotation
+        const target = faceRotations[value];
         
-        // Calculate target rotation with extra spins for visual effect
-        const targetFace = faceRotations[value];
-        const extraSpinsX = (Math.floor(Math.random() * 3) + 4) * 360; // 4-6 full rotations
-        const extraSpinsY = (Math.floor(Math.random() * 3) + 4) * 360;
+        // Add random full spins (5-8 rotations) to current accumulated position
+        const spinsX = (Math.floor(Math.random() * 4) + 5) * 360;
+        const spinsY = (Math.floor(Math.random() * 4) + 5) * 360;
         
-        setCurrentRotation({
-          x: targetFace.x + extraSpinsX,
-          y: targetFace.y + extraSpinsY,
-        });
+        // Calculate new absolute rotation
+        // Find the next valid rotation that lands on the target face
+        const newX = accumulatedRotation.current.x + spinsX + target.x - (accumulatedRotation.current.x % 360);
+        const newY = accumulatedRotation.current.y + spinsY + target.y - (accumulatedRotation.current.y % 360);
+        
+        // Update accumulated rotation
+        accumulatedRotation.current = { x: newX, y: newY };
+        
+        // Apply the transform
+        setTransform(`rotateX(${newX}deg) rotateY(${newY}deg)`);
       }, delay);
 
-      return () => clearTimeout(startTimer);
-    } else {
-      // When not rolling, just show the face directly (for reset)
-      setIsAnimating(false);
-      const targetFace = faceRotations[value];
-      // Normalize rotation to the base face angle
-      setCurrentRotation({
-        x: targetFace.x,
-        y: targetFace.y,
-      });
+      return () => clearTimeout(timer);
     }
   }, [rolling, value, delay]);
 
@@ -119,17 +119,14 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
         className="absolute w-full h-full"
         style={{
           transformStyle: "preserve-3d",
-          transform: `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`,
-          transition: isAnimating ? "transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)" : "transform 0.3s ease-out",
+          transform,
+          transition: useTransition ? "transform 2s cubic-bezier(0.25, 0.1, 0.25, 1)" : "none",
         }}
       >
         {/* Face 1 - Front */}
         <div
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
-          style={{
-            transform: "translateZ(40px)",
-            ...faceStyle,
-          }}
+          style={{ transform: "translateZ(40px)", ...faceStyle }}
         >
           {renderDots(1)}
         </div>
@@ -137,10 +134,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
         {/* Face 6 - Back */}
         <div
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
-          style={{
-            transform: "rotateY(180deg) translateZ(40px)",
-            ...faceStyle,
-          }}
+          style={{ transform: "rotateY(180deg) translateZ(40px)", ...faceStyle }}
         >
           {renderDots(6)}
         </div>
@@ -148,10 +142,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
         {/* Face 2 - Right */}
         <div
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
-          style={{
-            transform: "rotateY(90deg) translateZ(40px)",
-            ...faceStyle,
-          }}
+          style={{ transform: "rotateY(90deg) translateZ(40px)", ...faceStyle }}
         >
           {renderDots(2)}
         </div>
@@ -159,10 +150,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
         {/* Face 5 - Left */}
         <div
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
-          style={{
-            transform: "rotateY(-90deg) translateZ(40px)",
-            ...faceStyle,
-          }}
+          style={{ transform: "rotateY(-90deg) translateZ(40px)", ...faceStyle }}
         >
           {renderDots(5)}
         </div>
@@ -170,10 +158,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
         {/* Face 3 - Top */}
         <div
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
-          style={{
-            transform: "rotateX(90deg) translateZ(40px)",
-            ...faceStyle,
-          }}
+          style={{ transform: "rotateX(90deg) translateZ(40px)", ...faceStyle }}
         >
           {renderDots(3)}
         </div>
@@ -181,10 +166,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
         {/* Face 4 - Bottom */}
         <div
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
-          style={{
-            transform: "rotateX(-90deg) translateZ(40px)",
-            ...faceStyle,
-          }}
+          style={{ transform: "rotateX(-90deg) translateZ(40px)", ...faceStyle }}
         >
           {renderDots(4)}
         </div>
