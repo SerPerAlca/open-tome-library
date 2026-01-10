@@ -36,13 +36,14 @@ const AnimatedBookPage = ({
   return (
     <div
       className={cn(
-        "relative h-full",
+        "relative h-full bg-paper",
         needsPerspective && "perspective-1000",
         className
       )}
       style={{
         perspective: needsPerspective ? "1500px" : undefined,
         transformStyle: "preserve-3d",
+        backgroundColor: "hsl(42 45% 88%)", // --paper fallback
       }}
     >
       <div

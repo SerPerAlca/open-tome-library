@@ -43,18 +43,26 @@ const SceneContent = ({
 
       <ScrollArea className="flex-1 pr-4">
         <div className="space-y-4">
-          {/* Scene text paragraphs - increased font size */}
-          {textParagraphs.map((paragraph, index) => (
-            <p
-              key={index}
-              className={cn(
-                "font-body text-lg md:text-xl text-foreground leading-relaxed",
-                index === 0 && "first-letter:font-display first-letter:text-5xl first-letter:float-left first-letter:mr-2 first-letter:text-gold first-letter:leading-none"
-              )}
-            >
-              {paragraph}
-            </p>
-          ))}
+          {/* Scene text paragraphs - process \n\n for line breaks */}
+          {textParagraphs.map((paragraph, paragraphIndex) => {
+            // Split by literal \n\n (escaped in JSON) to create separate paragraphs
+            const subParagraphs = paragraph.split(/\\n\\n|\n\n/).filter(p => p.trim());
+            
+            return subParagraphs.map((subParagraph, subIndex) => {
+              const isFirstParagraph = paragraphIndex === 0 && subIndex === 0;
+              return (
+                <p
+                  key={`${paragraphIndex}-${subIndex}`}
+                  className={cn(
+                    "font-body text-lg md:text-xl text-foreground leading-relaxed",
+                    isFirstParagraph && "first-letter:font-display first-letter:text-5xl first-letter:float-left first-letter:mr-2 first-letter:text-gold first-letter:leading-none"
+                  )}
+                >
+                  {subParagraph.trim()}
+                </p>
+              );
+            });
+          })}
 
           {/* Choices section */}
           {choices.length > 0 && (
