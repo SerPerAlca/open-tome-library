@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 interface DieProps {
   value: number;
@@ -7,15 +8,48 @@ interface DieProps {
 }
 
 const Die = ({ value, rolling, delay = 0 }: DieProps) => {
+  const [currentRotation, setCurrentRotation] = useState({ x: 0, y: 0 });
+  const [isAnimating, setIsAnimating] = useState(false);
+
   // Each face needs specific rotation to show the correct number
-  const faceRotations: Record<number, string> = {
-    1: "rotateX(0deg) rotateY(0deg)",
-    2: "rotateX(0deg) rotateY(-90deg)",
-    3: "rotateX(-90deg) rotateY(0deg)",
-    4: "rotateX(90deg) rotateY(0deg)",
-    5: "rotateX(0deg) rotateY(90deg)",
-    6: "rotateX(180deg) rotateY(0deg)",
+  const faceRotations: Record<number, { x: number; y: number }> = {
+    1: { x: 0, y: 0 },
+    2: { x: 0, y: -90 },
+    3: { x: -90, y: 0 },
+    4: { x: 90, y: 0 },
+    5: { x: 0, y: 90 },
+    6: { x: 180, y: 0 },
   };
+
+  useEffect(() => {
+    if (rolling) {
+      // Start animation after delay
+      const startTimer = setTimeout(() => {
+        setIsAnimating(true);
+        
+        // Calculate target rotation with extra spins for visual effect
+        const targetFace = faceRotations[value];
+        const extraSpinsX = (Math.floor(Math.random() * 3) + 4) * 360; // 4-6 full rotations
+        const extraSpinsY = (Math.floor(Math.random() * 3) + 4) * 360;
+        
+        setCurrentRotation({
+          x: targetFace.x + extraSpinsX,
+          y: targetFace.y + extraSpinsY,
+        });
+      }, delay);
+
+      return () => clearTimeout(startTimer);
+    } else {
+      // When not rolling, just show the face directly (for reset)
+      setIsAnimating(false);
+      const targetFace = faceRotations[value];
+      // Normalize rotation to the base face angle
+      setCurrentRotation({
+        x: targetFace.x,
+        y: targetFace.y,
+      });
+    }
+  }, [rolling, value, delay]);
 
   // Dot patterns for each face
   const dotPatterns: Record<number, { top: string; left: string }[]> = {
@@ -68,6 +102,11 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
     </>
   );
 
+  const faceStyle = {
+    background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
+    boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+  };
+
   return (
     <div
       className="relative w-20 h-20"
@@ -77,15 +116,11 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
       }}
     >
       <div
-        className={cn(
-          "absolute w-full h-full transition-transform",
-          rolling ? "animate-dice-roll" : ""
-        )}
+        className="absolute w-full h-full"
         style={{
           transformStyle: "preserve-3d",
-          transform: rolling ? undefined : faceRotations[value],
-          transitionDuration: rolling ? "0s" : "0.3s",
-          animationDelay: rolling ? `${delay}ms` : undefined,
+          transform: `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`,
+          transition: isAnimating ? "transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)" : "transform 0.3s ease-out",
         }}
       >
         {/* Face 1 - Front */}
@@ -93,8 +128,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
           style={{
             transform: "translateZ(40px)",
-            background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
-            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+            ...faceStyle,
           }}
         >
           {renderDots(1)}
@@ -105,8 +139,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
           style={{
             transform: "rotateY(180deg) translateZ(40px)",
-            background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
-            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+            ...faceStyle,
           }}
         >
           {renderDots(6)}
@@ -117,8 +150,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
           style={{
             transform: "rotateY(90deg) translateZ(40px)",
-            background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
-            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+            ...faceStyle,
           }}
         >
           {renderDots(2)}
@@ -129,8 +161,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
           style={{
             transform: "rotateY(-90deg) translateZ(40px)",
-            background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
-            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+            ...faceStyle,
           }}
         >
           {renderDots(5)}
@@ -141,8 +172,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
           style={{
             transform: "rotateX(90deg) translateZ(40px)",
-            background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
-            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+            ...faceStyle,
           }}
         >
           {renderDots(3)}
@@ -153,8 +183,7 @@ const Die = ({ value, rolling, delay = 0 }: DieProps) => {
           className="absolute w-full h-full rounded-lg border-2 border-amber-800/30 shadow-lg"
           style={{
             transform: "rotateX(-90deg) translateZ(40px)",
-            background: "linear-gradient(145deg, #f5f0e1 0%, #e8dcc8 100%)",
-            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.5), inset -2px -2px 4px rgba(0,0,0,0.1)",
+            ...faceStyle,
           }}
         >
           {renderDots(4)}
