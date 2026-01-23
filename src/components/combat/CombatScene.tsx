@@ -1,8 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCombat } from "@/hooks/useCombat";
 import CombatCard from "./CombatCard";
-import LoadingCards from "./LoadingCards";
+import DealingAnimation from "./DealingAnimation";
 import { Scene } from "@/types/game-engine";
 import { Trophy, Swords } from "lucide-react";
 
@@ -20,11 +20,42 @@ const COMBAT_BACKGROUNDS = [
   "linear-gradient(135deg, #1a1a2e 0%, #4a1942 50%, #1a1a2e 100%)", // Dark magic
 ];
 
+const SUSPENSE_DURATION = 3000; // 3 seconds of suspense animation
+
 const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
   const { combatData, phase, isLoading, error, finishCombat } = useCombat(scene.id);
+  const [showEnemyCards, setShowEnemyCards] = useState(false);
+  const [showRewardCards, setShowRewardCards] = useState(false);
+  const [isEnemyAnimating, setIsEnemyAnimating] = useState(true);
+  const [isRewardAnimating, setIsRewardAnimating] = useState(false);
 
   const randomBackground = useMemo(() => {
     return COMBAT_BACKGROUNDS[Math.floor(Math.random() * COMBAT_BACKGROUNDS.length)];
+  }, []);
+
+  // Handle enemy phase animation
+  useEffect(() => {
+    if (!isLoading && combatData && phase === "PHASE_ENEMIES" && !showEnemyCards) {
+      setIsEnemyAnimating(true);
+    }
+  }, [isLoading, combatData, phase, showEnemyCards]);
+
+  // Handle reward phase animation
+  useEffect(() => {
+    if (phase === "PHASE_REWARDS" && !showRewardCards) {
+      setShowEnemyCards(false);
+      setIsRewardAnimating(true);
+    }
+  }, [phase, showRewardCards]);
+
+  const handleEnemyAnimationComplete = useCallback(() => {
+    setIsEnemyAnimating(false);
+    setShowEnemyCards(true);
+  }, []);
+
+  const handleRewardAnimationComplete = useCallback(() => {
+    setIsRewardAnimating(false);
+    setShowRewardCards(true);
   }, []);
 
   const handleFinishCombat = useCallback(() => {
@@ -56,13 +87,12 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
         ))}
       </div>
 
-      {/* Loading state */}
+      {/* Loading state - show while fetching data */}
       {isLoading && (
         <div className="flex flex-col items-center gap-8">
           <h2 className="font-display text-3xl text-amber-200 animate-pulse">
             Preparando combate...
           </h2>
-          <LoadingCards count={3} />
         </div>
       )}
 
@@ -79,32 +109,66 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
         </div>
       )}
 
+      {/* Enemy dealing animation */}
+      {!isLoading && combatData && isEnemyAnimating && phase === "PHASE_ENEMIES" && (
+        <>
+          <h2 className="font-display text-3xl text-amber-200 animate-pulse z-10">
+            ¡Enemigos acechando!
+          </h2>
+          <DealingAnimation
+            cardCount={combatData.enemies.length}
+            onComplete={handleEnemyAnimationComplete}
+            duration={SUSPENSE_DURATION}
+          />
+        </>
+      )}
+
+      {/* Reward dealing animation */}
+      {isRewardAnimating && combatData && (
+        <>
+          <h2 className="font-display text-3xl text-yellow-200 animate-pulse z-10">
+            ¡Recogiendo botín!
+          </h2>
+          <DealingAnimation
+            cardCount={combatData.rewards.length || 1}
+            onComplete={handleRewardAnimationComplete}
+            duration={SUSPENSE_DURATION}
+          />
+        </>
+      )}
+
       {/* Combat content */}
       {!isLoading && !error && combatData && (
-        <div className="w-full max-w-6xl flex flex-col items-center gap-8 animate-fade-in">
+        <div className="w-full max-w-7xl flex flex-col items-center gap-8 animate-fade-in">
           {/* Phase: Enemies */}
-          {phase === "PHASE_ENEMIES" && (
+          {phase === "PHASE_ENEMIES" && showEnemyCards && (
             <>
               {/* Header */}
               <div className="flex items-center gap-3">
-                <Swords className="w-8 h-8 text-red-400" />
-                <h1 className="font-display text-4xl text-amber-100 drop-shadow-lg">
+                <Swords className="w-10 h-10 text-red-400" />
+                <h1 className="font-display text-5xl text-amber-100 drop-shadow-lg">
                   ¡COMBATE!
                 </h1>
-                <Swords className="w-8 h-8 text-red-400 scale-x-[-1]" />
+                <Swords className="w-10 h-10 text-red-400 scale-x-[-1]" />
               </div>
 
               {/* Location */}
               {scene.sceneLocation && (
-                <p className="font-body text-lg text-gray-300 italic">
+                <p className="font-body text-xl text-gray-300 italic">
                   {scene.sceneLocation}
                 </p>
               )}
 
-              {/* Enemy cards */}
-              <div className="flex flex-wrap justify-center gap-6">
-                {combatData.enemies.map((enemy) => (
-                  <CombatCard key={enemy.id} data={enemy} type="enemy" />
+              {/* Enemy cards with staggered reveal */}
+              <div className="flex flex-wrap justify-center gap-8">
+                {combatData.enemies.map((enemy, index) => (
+                  <div
+                    key={enemy.id}
+                    className="animate-card-reveal"
+                    style={{ animationDelay: `${index * 200}ms` }}
+                  >
+                    <CombatCard data={enemy} type="enemy" />
+                  </div>
                 ))}
               </div>
 
@@ -112,7 +176,7 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
               <button
                 onClick={handleFinishCombat}
                 className={cn(
-                  "mt-6 px-8 py-4 rounded-xl font-display text-xl",
+                  "mt-6 px-10 py-5 rounded-xl font-display text-2xl",
                   "bg-gradient-to-r from-red-600 via-red-500 to-red-600",
                   "hover:from-red-500 hover:via-red-400 hover:to-red-500",
                   "text-white shadow-lg shadow-red-900/50",
@@ -127,20 +191,20 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
           )}
 
           {/* Phase: Rewards */}
-          {phase === "PHASE_REWARDS" && (
+          {phase === "PHASE_REWARDS" && showRewardCards && (
             <>
               {/* Header */}
               <div className="flex items-center gap-3">
-                <Trophy className="w-8 h-8 text-yellow-400" />
-                <h1 className="font-display text-4xl text-amber-100 drop-shadow-lg">
+                <Trophy className="w-10 h-10 text-yellow-400" />
+                <h1 className="font-display text-5xl text-amber-100 drop-shadow-lg">
                   ¡VICTORIA!
                 </h1>
-                <Trophy className="w-8 h-8 text-yellow-400" />
+                <Trophy className="w-10 h-10 text-yellow-400" />
               </div>
 
               {/* Total EXP */}
-              <div className="bg-purple-900/50 border-2 border-purple-400 rounded-xl px-8 py-4">
-                <p className="font-display text-2xl text-purple-200">
+              <div className="bg-purple-900/50 border-2 border-purple-400 rounded-xl px-10 py-5">
+                <p className="font-display text-3xl text-purple-200">
                   EXPERIENCIA OBTENIDA:{" "}
                   <span className="text-yellow-400 font-bold">
                     +{combatData.expPointsTotal} EXP
@@ -148,19 +212,21 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
                 </p>
               </div>
 
-              {/* Reward cards */}
+              {/* Reward cards with staggered reveal */}
               {combatData.rewards.length > 0 && (
                 <>
-                  <h2 className="font-display text-2xl text-amber-200 mt-4">
+                  <h2 className="font-display text-3xl text-amber-200 mt-4">
                     Recompensas
                   </h2>
-                  <div className="flex flex-wrap justify-center gap-6">
-                    {combatData.rewards.map((reward) => (
-                      <CombatCard
+                  <div className="flex flex-wrap justify-center gap-8">
+                    {combatData.rewards.map((reward, index) => (
+                      <div
                         key={`${reward.productType}-${reward.productId}`}
-                        data={reward}
-                        type="reward"
-                      />
+                        className="animate-card-reveal"
+                        style={{ animationDelay: `${index * 200}ms` }}
+                      >
+                        <CombatCard data={reward} type="reward" />
+                      </div>
                     ))}
                   </div>
                 </>
@@ -170,7 +236,7 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
               <button
                 onClick={handleContinue}
                 className={cn(
-                  "mt-6 px-8 py-4 rounded-xl font-display text-xl",
+                  "mt-6 px-10 py-5 rounded-xl font-display text-2xl",
                   "bg-gradient-to-r from-green-600 via-green-500 to-green-600",
                   "hover:from-green-500 hover:via-green-400 hover:to-green-500",
                   "text-white shadow-lg shadow-green-900/50",
