@@ -113,6 +113,10 @@ export default {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "breathe": {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.02)" },
+        },
         "content-fade": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -125,6 +129,7 @@ export default {
         "page-turn-backward-left": "page-turn-backward-left 0.6s ease-in-out forwards",
         "fade-in": "fade-in 0.4s ease-out",
         "content-fade": "content-fade 0.3s ease-out",
+        "breathe": "breathe 3s ease-in-out infinite",
       },
     },
   },

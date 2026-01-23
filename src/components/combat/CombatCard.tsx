@@ -144,9 +144,9 @@ const CombatCard = ({ data, type }: CombatCardProps) => {
             </h3>
           </div>
 
-          {/* EXP Badge (enemy only) */}
+          {/* EXP Badge (enemy only) - positioned bottom-left */}
           {isEnemy && enemy && (
-            <div className="absolute top-1 right-1 bg-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+            <div className="absolute bottom-2 left-2 bg-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg z-10">
               +{enemy.expPoints} EXP
             </div>
           )}
@@ -159,11 +159,11 @@ const CombatCard = ({ data, type }: CombatCardProps) => {
           )}
 
           {/* Image */}
-          <div className="h-32 overflow-hidden">
+          <div className="h-32 overflow-hidden bg-black/20">
             <img
               src={imagePath}
               alt={data.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain object-top"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = "/placeholder.svg";
               }}

@@ -118,7 +118,7 @@ const CombatScene = ({ scene, onContinue }: CombatSceneProps) => {
                   "text-white shadow-lg shadow-red-900/50",
                   "border-2 border-red-400",
                   "transform hover:scale-105 transition-all duration-300",
-                  "animate-pulse"
+                  "animate-breathe"
                 )}
               >
                 ⚔️ FINALIZAR COMBATE ⚔️
