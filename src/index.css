@@ -376,6 +376,91 @@
   transform: rotateY(180deg);
 }
 
+/* Card dealing animations */
+@keyframes orbit-card {
+  0% {
+    transform: translate(calc(cos(var(--orbit-angle)) * var(--orbit-radius)), 
+                         calc(sin(var(--orbit-angle)) * var(--orbit-radius))) 
+               rotate(0deg) scale(0.8);
+    opacity: 0.8;
+  }
+  25% {
+    transform: translate(calc(cos(calc(var(--orbit-angle) + 90deg)) * var(--orbit-radius)), 
+                         calc(sin(calc(var(--orbit-angle) + 90deg)) * var(--orbit-radius))) 
+               rotate(90deg) scale(0.9);
+  }
+  50% {
+    transform: translate(calc(cos(calc(var(--orbit-angle) + 180deg)) * var(--orbit-radius)), 
+                         calc(sin(calc(var(--orbit-angle) + 180deg)) * var(--orbit-radius))) 
+               rotate(180deg) scale(0.85);
+  }
+  75% {
+    transform: translate(calc(cos(calc(var(--orbit-angle) + 270deg)) * var(--orbit-radius)), 
+                         calc(sin(calc(var(--orbit-angle) + 270deg)) * var(--orbit-radius))) 
+               rotate(270deg) scale(0.9);
+  }
+  100% {
+    transform: translate(calc(cos(var(--orbit-angle)) * var(--orbit-radius)), 
+                         calc(sin(var(--orbit-angle)) * var(--orbit-radius))) 
+               rotate(360deg) scale(0.8);
+    opacity: 0.8;
+  }
+}
+
+.animate-orbit-card {
+  animation: orbit-card 1.5s linear infinite;
+}
+
+@keyframes converge-card {
+  0% {
+    transform: translate(calc(cos(var(--orbit-angle)) * var(--orbit-radius)), 
+                         calc(sin(var(--orbit-angle)) * var(--orbit-radius))) 
+               rotate(15deg) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--final-x), 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-converge-card {
+  animation: converge-card 0.8s ease-out forwards;
+}
+
+@keyframes card-reveal {
+  0% {
+    transform: scale(0.8) rotateY(180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05) rotateY(90deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-card-reveal {
+  animation: card-reveal 0.6s ease-out forwards;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+
 @layer utilities {
   .font-display {
     font-family: 'Playfair Display', Georgia, serif;
