@@ -5,6 +5,7 @@ import ActionButtons from "@/components/ActionButtons";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
 import SceneContent from "@/components/SceneContent";
 import DiceOverlay from "@/components/dice/DiceOverlay";
+import CombatScene from "@/components/combat/CombatScene";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
 
@@ -55,6 +56,26 @@ const Book = () => {
     // TODO: Implement index navigation
     console.log("Navigate to index");
   }, []);
+
+  // Handle combat scene continue
+  const handleCombatContinue = useCallback(() => {
+    if (currentScene?.nextSceneId) {
+      goToNextScene();
+    }
+  }, [currentScene, goToNextScene]);
+
+  // Check if current scene is a combat scene
+  const isCombatScene = currentScene?.sceneType === "FGHT";
+
+  // If it's a combat scene, render CombatScene instead
+  if (isCombatScene && currentScene) {
+    return (
+      <>
+        <CombatScene scene={currentScene} onContinue={handleCombatContinue} />
+        <DiceOverlay isOpen={showDice} onClose={() => setShowDice(false)} />
+      </>
+    );
+  }
 
   const actionButtons = [
     { id: "dice", label: "Lanzar Dados", icon: "🎲", onClick: handleDiceRoll },
