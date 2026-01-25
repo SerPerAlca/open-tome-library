@@ -30,6 +30,8 @@ export interface Scene {
   sceneLocation?: string;
   choices: Choice[];
   images: SceneImage[];
+  // Special scene properties
+  resource?: string;
 }
 
 export interface GameEngineState {
