@@ -193,11 +193,11 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
                     </div>
 
                     {/* Additional Stats if available */}
-                    {(weapon.magicalAttack || weapon.speed || weapon.range) && (
+                    {(weapon.magicAttack || weapon.magicalAttack || weapon.speed || weapon.range) && (
                       <div className="grid grid-cols-3 gap-2 text-sm">
-                        {weapon.magicalAttack && (
+                        {(weapon.magicAttack || weapon.magicalAttack) && (
                           <div className="bg-black/30 rounded px-2 py-1 text-center">
-                            <span className="text-purple-400">✨ {weapon.magicalAttack}</span>
+                            <span className="text-purple-400">✨ {weapon.magicAttack || weapon.magicalAttack}</span>
                           </div>
                         )}
                         {weapon.speed && (
@@ -245,9 +245,7 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
                     {weapon.name}
                   </h3>
                   <p className="text-base text-gray-300 flex-1 overflow-y-auto leading-relaxed">
-                    Un arma de tipo {weapon.weaponType.toLowerCase()} con {weapon.physicalAttack} puntos de ataque físico. 
-                    {weapon.magicalAttack && ` También posee ${weapon.magicalAttack} de ataque mágico.`}
-                    {weapon.weight <= 5 ? " Su ligereza permite ataques rápidos." : weapon.weight >= 10 ? " Su peso considerable requiere fuerza para manejarla." : " Un peso equilibrado para cualquier combatiente."}
+                    {weapon.description || `Un arma de tipo ${weapon.weaponType.toLowerCase()} con ${weapon.physicalAttack} puntos de ataque físico.`}
                   </p>
 
                   {/* Flip back button */}
