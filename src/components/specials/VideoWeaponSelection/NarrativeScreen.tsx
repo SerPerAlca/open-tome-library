@@ -8,7 +8,7 @@ interface NarrativeScreenProps {
 
 const NarrativeScreen = ({
   text,
-  duration = 5000,
+  duration = 6500,
   onComplete,
 }: NarrativeScreenProps) => {
   const [isVisible, setIsVisible] = useState(false);
