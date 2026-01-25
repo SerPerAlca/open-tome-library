@@ -7,6 +7,7 @@ import SceneContent from "@/components/SceneContent";
 import DiceOverlay from "@/components/dice/DiceOverlay";
 import CombatScene from "@/components/combat/CombatScene";
 import DevTools from "@/components/dev/DevTools";
+import VideoWeaponSelection from "@/components/specials/VideoWeaponSelection";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
 
@@ -66,8 +67,30 @@ const Book = () => {
     }
   }, [currentScene, goToNextScene]);
 
+  // Handle special scene continue
+  const handleSpecialSceneContinue = useCallback(() => {
+    if (currentScene?.nextSceneId) {
+      goToNextScene();
+    }
+  }, [currentScene, goToNextScene]);
+
   // Check if current scene is a combat scene
   const isCombatScene = currentScene?.sceneType === "FGHT";
+
+  // Check if current scene is a special scene (VIDEO_WEAPON_SELECTION)
+  const isWeaponSelectionScene =
+    currentScene?.sceneType === "SPEC" &&
+    (currentScene as any)?.resource === "VIDEO_WEAPON_SELECTION";
+
+  // If it's a weapon selection scene, render VideoWeaponSelection
+  if (isWeaponSelectionScene && currentScene) {
+    return (
+      <VideoWeaponSelection
+        scene={currentScene}
+        onComplete={handleSpecialSceneContinue}
+      />
+    );
+  }
 
   // If it's a combat scene, render CombatScene instead
   if (isCombatScene && currentScene) {
