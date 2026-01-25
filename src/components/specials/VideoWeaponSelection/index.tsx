@@ -17,6 +17,17 @@ const VIDEO_URL = "http://localhost:8082/static/video/chapter1/weapon_selection.
 // Mock player names - in a real scenario, these would come from game context
 const MOCK_PLAYERS = ["Kaska", "Zornak"];
 
+// Preload video component - hidden but starts buffering
+const VideoPreloader = ({ url }: { url: string }) => (
+  <video
+    src={url}
+    preload="auto"
+    muted
+    style={{ display: "none" }}
+    aria-hidden="true"
+  />
+);
+
 const VideoWeaponSelection = ({ scene, onComplete }: VideoWeaponSelectionProps) => {
   const [phase, setPhase] = useState<SelectionPhase>("loading");
   const [weapons, setWeapons] = useState<Weapon[]>([]);
@@ -78,11 +89,15 @@ const VideoWeaponSelection = ({ scene, onComplete }: VideoWeaponSelectionProps) 
   // Selection Phase
   if (phase === "selection") {
     return (
-      <WeaponSelector
-        weapons={weapons}
-        players={MOCK_PLAYERS}
-        onComplete={handleSelectionComplete}
-      />
+      <>
+        {/* Preload video while user selects weapons */}
+        <VideoPreloader url={VIDEO_URL} />
+        <WeaponSelector
+          weapons={weapons}
+          players={MOCK_PLAYERS}
+          onComplete={handleSelectionComplete}
+        />
+      </>
     );
   }
 
