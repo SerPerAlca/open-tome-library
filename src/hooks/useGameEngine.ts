@@ -138,6 +138,33 @@ export const useGameEngine = (chapterId: number = 1) => {
     });
   }, []);
 
+  // Jump to any scene by ID (for dev tools) - resets all temporary state
+  const jumpToScene = useCallback((sceneId: number) => {
+    // Clear any image timeouts
+    if (imageTimeoutRef.current) {
+      clearTimeout(imageTimeoutRef.current);
+      imageTimeoutRef.current = null;
+    }
+
+    setState((prev) => {
+      const targetScene = prev.scenes.find((s) => s.id === sceneId);
+      if (!targetScene) {
+        console.error(`[DevTools] Scene with ID ${sceneId} not found in loaded scenes`);
+        return prev;
+      }
+
+      console.log(`[DevTools] Jumping to scene ${sceneId}`, targetScene);
+
+      return {
+        ...prev,
+        currentScene: targetScene,
+        currentImageIndex: 0,
+        accumulatedText: [targetScene.sceneText],
+        currentChoices: targetScene.choices || [],
+      };
+    });
+  }, []);
+
   // Handle choice selection
   const handleChoiceSelect = useCallback((choice: Choice) => {
     if (choice.obligatory) {
@@ -201,5 +228,6 @@ export const useGameEngine = (chapterId: number = 1) => {
     goToNextScene,
     canGoNext: canGoNext(),
     navigateToScene,
+    jumpToScene,
   };
 };
