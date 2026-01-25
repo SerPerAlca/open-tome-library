@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Weapon, PlayerSelection } from "./types";
+import { Sword, Scale, ChevronRight } from "lucide-react";
 
 interface WeaponSelectorProps {
   weapons: Weapon[];
@@ -17,6 +17,7 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
     players.map((name) => ({ playerName: name, weaponId: null }))
   );
   const [selectedWeaponId, setSelectedWeaponId] = useState<number | null>(null);
+  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
 
   const currentPlayer = players[currentPlayerIndex];
   const isLastPlayer = currentPlayerIndex === players.length - 1;
@@ -31,6 +32,19 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
     setSelectedWeaponId(weaponId);
   };
 
+  const handleFlip = (e: React.MouseEvent, weaponId: number) => {
+    e.stopPropagation();
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(weaponId)) {
+        newSet.delete(weaponId);
+      } else {
+        newSet.add(weaponId);
+      }
+      return newSet;
+    });
+  };
+
   const handleConfirm = () => {
     if (selectedWeaponId === null) return;
 
@@ -42,12 +56,11 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
     setSelections(newSelections);
 
     if (isLastPlayer) {
-      // All players have selected
       onComplete(newSelections);
     } else {
-      // Move to next player
       setCurrentPlayerIndex((prev) => prev + 1);
       setSelectedWeaponId(null);
+      setFlippedCards(new Set());
     }
   };
 
@@ -66,71 +79,187 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
         </p>
       </div>
 
-      {/* Weapon Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mb-8">
+      {/* Weapon Grid - CombatCard Style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mb-8">
         {weapons.map((weapon) => {
           const isTaken = takenWeaponIds.includes(weapon.weaponId);
           const isSelected = selectedWeaponId === weapon.weaponId;
+          const isFlipped = flippedCards.has(weapon.weaponId);
           const rarityHex = weapon.rarityColor.startsWith("#")
             ? weapon.rarityColor
             : `#${weapon.rarityColor}`;
 
+          // Rarity-based styles matching CombatCard
+          const rarityStyles = {
+            borderColor: rarityHex,
+            boxShadow: isSelected 
+              ? `0 0 30px ${rarityHex}80, 0 0 60px ${rarityHex}40, 0 0 90px ${rarityHex}20`
+              : `0 0 20px ${rarityHex}60, 0 0 40px ${rarityHex}30, inset 0 0 30px ${rarityHex}10`,
+            background: `linear-gradient(to bottom, 
+              ${rarityHex}15 0%, 
+              rgba(17, 24, 39, 0.95) 30%, 
+              rgba(17, 24, 39, 0.98) 100%)`,
+          };
+
           return (
-            <Card
-              key={weapon.weaponId}
-              onClick={() => handleWeaponClick(weapon.weaponId)}
-              className={`
-                relative cursor-pointer transition-all duration-300 overflow-hidden
-                border-2 bg-card/80 backdrop-blur
-                ${isTaken ? "opacity-40 grayscale cursor-not-allowed" : ""}
-                ${isSelected ? "scale-105 ring-4 ring-gold" : "hover:scale-102"}
-              `}
-              style={{
-                borderColor: isSelected ? rarityHex : "transparent",
-                boxShadow: isSelected
-                  ? `0 0 30px ${rarityHex}60, 0 0 60px ${rarityHex}30`
-                  : undefined,
-              }}
+            <div 
+              key={weapon.weaponId} 
+              className="perspective-1000 w-80 h-[480px]"
             >
-              {/* Taken Overlay */}
-              {isTaken && (
-                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60">
-                  <span className="font-display text-lg text-white/80 rotate-[-15deg]">
-                    TOMADA
-                  </span>
-                </div>
-              )}
-
-              {/* Weapon Image */}
-              <div className="aspect-square relative bg-black/20">
-                <img
-                  src={`${WEAPON_BASE_URL}${weapon.imagePath}`}
-                  alt={weapon.name}
-                  className="w-full h-full object-contain object-center p-4"
-                />
-              </div>
-
-              <CardContent className="p-4">
-                {/* Weapon Name */}
-                <h3
-                  className="font-display text-lg text-center mb-2"
-                  style={{ color: rarityHex }}
+              <div
+                onClick={() => !isTaken && handleWeaponClick(weapon.weaponId)}
+                className={`
+                  relative w-full h-full transition-transform duration-500 cursor-pointer
+                  ${isFlipped ? "rotate-y-180" : ""}
+                  ${isTaken ? "pointer-events-none" : ""}
+                `}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {/* Front Face */}
+                <div
+                  className={`
+                    absolute inset-0 backface-hidden rounded-xl overflow-hidden
+                    border-4 shadow-2xl transition-all duration-300
+                    ${isTaken ? "opacity-40 grayscale" : ""}
+                    ${isSelected ? "scale-105 ring-4 ring-gold" : "hover:scale-[1.02]"}
+                  `}
+                  style={{
+                    backfaceVisibility: "hidden",
+                    ...rarityStyles,
+                  }}
                 >
-                  {weapon.name}
-                </h3>
+                  {/* Taken Overlay */}
+                  {isTaken && (
+                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60">
+                      <span className="font-display text-2xl text-white/80 rotate-[-15deg] border-2 border-white/40 px-4 py-2">
+                        TOMADA
+                      </span>
+                    </div>
+                  )}
 
-                {/* Stats */}
-                <div className="flex justify-center gap-4 text-sm font-body text-muted-foreground">
-                  <span>⚔️ {weapon.physicalAttack}</span>
-                  <span>⚖️ {weapon.weight}</span>
+                  {/* Header with name */}
+                  <div
+                    className="px-4 py-3 text-center"
+                    style={{ backgroundColor: rarityHex }}
+                  >
+                    <h3 className="font-display font-bold text-lg text-gray-900 truncate">
+                      {weapon.name}
+                    </h3>
+                  </div>
+
+                  {/* Weapon Image */}
+                  <div className="h-52 overflow-hidden bg-black/20 flex items-center justify-center">
+                    <img
+                      src={`${WEAPON_BASE_URL}${weapon.imagePath}`}
+                      alt={weapon.name}
+                      className="w-full h-full object-contain object-center p-4"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/placeholder.svg";
+                      }}
+                    />
+                  </div>
+
+                  {/* Stats Section */}
+                  <div className="p-4 space-y-4">
+                    {/* Main Stats Grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2">
+                        <span className="text-gray-400 flex items-center gap-2">
+                          <Sword className="w-4 h-4" />
+                          Ataque:
+                        </span>
+                        <span className="text-amber-100 font-bold text-lg">{weapon.physicalAttack}</span>
+                      </div>
+                      <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2">
+                        <span className="text-gray-400 flex items-center gap-2">
+                          <Scale className="w-4 h-4" />
+                          Peso:
+                        </span>
+                        <span className="text-amber-100 font-bold text-lg">{weapon.weight}</span>
+                      </div>
+                    </div>
+
+                    {/* Weapon Type */}
+                    <div className="text-center">
+                      <span 
+                        className="inline-block px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider"
+                        style={{ 
+                          backgroundColor: `${rarityHex}30`,
+                          color: rarityHex 
+                        }}
+                      >
+                        {weapon.weaponType}
+                      </span>
+                    </div>
+
+                    {/* Additional Stats if available */}
+                    {(weapon.magicalAttack || weapon.speed || weapon.range) && (
+                      <div className="grid grid-cols-3 gap-2 text-sm">
+                        {weapon.magicalAttack && (
+                          <div className="bg-black/30 rounded px-2 py-1 text-center">
+                            <span className="text-purple-400">✨ {weapon.magicalAttack}</span>
+                          </div>
+                        )}
+                        {weapon.speed && (
+                          <div className="bg-black/30 rounded px-2 py-1 text-center">
+                            <span className="text-blue-400">⚡ {weapon.speed}</span>
+                          </div>
+                        )}
+                        {weapon.range && (
+                          <div className="bg-black/30 rounded px-2 py-1 text-center">
+                            <span className="text-green-400">🎯 {weapon.range}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Selected Indicator */}
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 bg-gold text-black text-xs font-bold px-2 py-1 rounded-full">
+                      ✓ SELECCIONADA
+                    </div>
+                  )}
+
+                  {/* Flip button */}
+                  <button
+                    onClick={(e) => handleFlip(e, weapon.weaponId)}
+                    className="absolute bottom-3 right-3 bg-black/60 hover:bg-black/80 text-amber-200 p-2 rounded-full transition-colors z-10"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
                 </div>
 
-                {/* Weapon Type */}
-                <p className="text-center text-xs text-muted-foreground/60 mt-2 uppercase tracking-wider">
-                  {weapon.weaponType}
-                </p>
-              </CardContent>
-            </Card>
+                {/* Back Face - Description */}
+                <div
+                  className="absolute inset-0 backface-hidden rounded-xl overflow-hidden border-4 shadow-2xl rotate-y-180 p-5 flex flex-col"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                    borderColor: rarityHex,
+                    boxShadow: `0 0 20px ${rarityHex}40`,
+                    background: `linear-gradient(to bottom, rgba(17, 24, 39, 0.98), rgba(17, 24, 39, 0.95))`,
+                  }}
+                >
+                  <h3 className="font-display text-xl mb-4" style={{ color: rarityHex }}>
+                    {weapon.name}
+                  </h3>
+                  <p className="text-base text-gray-300 flex-1 overflow-y-auto leading-relaxed">
+                    Un arma de tipo {weapon.weaponType.toLowerCase()} con {weapon.physicalAttack} puntos de ataque físico. 
+                    {weapon.magicalAttack && ` También posee ${weapon.magicalAttack} de ataque mágico.`}
+                    {weapon.weight <= 5 ? " Su ligereza permite ataques rápidos." : weapon.weight >= 10 ? " Su peso considerable requiere fuerza para manejarla." : " Un peso equilibrado para cualquier combatiente."}
+                  </p>
+
+                  {/* Flip back button */}
+                  <button
+                    onClick={(e) => handleFlip(e, weapon.weaponId)}
+                    className="absolute bottom-3 left-3 bg-black/60 hover:bg-black/80 text-amber-200 p-2 rounded-full transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5 rotate-180" />
+                  </button>
+                </div>
+              </div>
+            </div>
           );
         })}
       </div>
