@@ -15,7 +15,7 @@ const WEAPONS_API_URL = "http://localhost:8082/weapons/starting";
 const VIDEO_URL = "http://localhost:8082/static/video/chapter1/weapon_selection.mp4";
 
 // Mock player names - in a real scenario, these would come from game context
-const MOCK_PLAYERS = ["Darius", "Zornak"];
+const MOCK_PLAYERS = ["Kaska", "Zornak"];
 
 const VideoWeaponSelection = ({ scene, onComplete }: VideoWeaponSelectionProps) => {
   const [phase, setPhase] = useState<SelectionPhase>("loading");
