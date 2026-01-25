@@ -6,6 +6,7 @@ import AnimatedBookPage from "@/components/AnimatedBookPage";
 import SceneContent from "@/components/SceneContent";
 import DiceOverlay from "@/components/dice/DiceOverlay";
 import CombatScene from "@/components/combat/CombatScene";
+import DevTools from "@/components/dev/DevTools";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
 
@@ -31,6 +32,7 @@ const Book = () => {
     handleChoiceSelect,
     goToNextScene,
     canGoNext,
+    jumpToScene,
   } = useGameEngine(1);
 
   // Page animation hook
@@ -181,6 +183,12 @@ const Book = () => {
 
       {/* Dice overlay */}
       <DiceOverlay isOpen={showDice} onClose={() => setShowDice(false)} />
+
+      {/* Dev Tools (only in development) */}
+      <DevTools
+        currentSceneId={currentScene?.id ?? null}
+        onJumpToScene={jumpToScene}
+      />
     </div>
   );
 };
