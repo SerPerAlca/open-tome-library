@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Weapon, PlayerSelection } from "./types";
-import { Sword, Scale, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface WeaponSelectorProps {
   weapons: Weapon[];
@@ -160,29 +160,27 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
                   </div>
 
                   {/* Stats Section */}
-                  <div className="p-4 space-y-4">
-                    {/* Main Stats Grid */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2">
-                        <span className="text-gray-400 flex items-center gap-2">
-                          <Sword className="w-4 h-4" />
-                          Ataque:
-                        </span>
+                  <div className="p-4 flex-1 flex flex-col justify-between">
+                    {/* Fixed 3-column Stats Grid */}
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div className="bg-black/40 rounded-lg px-2 py-2 text-center">
+                        <span className="text-gray-400 block text-xs mb-1">Ataque F:</span>
                         <span className="text-amber-100 font-bold text-lg">{weapon.physicalAttack}</span>
                       </div>
-                      <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2">
-                        <span className="text-gray-400 flex items-center gap-2">
-                          <Scale className="w-4 h-4" />
-                          Peso:
-                        </span>
+                      <div className="bg-black/40 rounded-lg px-2 py-2 text-center">
+                        <span className="text-gray-400 block text-xs mb-1">Ataque M:</span>
+                        <span className="text-amber-100 font-bold text-lg">{weapon.magicAttack ?? weapon.magicalAttack ?? 0}</span>
+                      </div>
+                      <div className="bg-black/40 rounded-lg px-2 py-2 text-center">
+                        <span className="text-gray-400 block text-xs mb-1">Peso:</span>
                         <span className="text-amber-100 font-bold text-lg">{weapon.weight}</span>
                       </div>
                     </div>
 
-                    {/* Weapon Type */}
-                    <div className="text-center">
+                    {/* Weapon Type Footer */}
+                    <div className="text-center mt-4">
                       <span 
-                        className="inline-block px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider"
+                        className="inline-block px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider"
                         style={{ 
                           backgroundColor: `${rarityHex}30`,
                           color: rarityHex 
@@ -191,27 +189,6 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
                         {weapon.weaponType}
                       </span>
                     </div>
-
-                    {/* Additional Stats if available */}
-                    {(weapon.magicAttack || weapon.magicalAttack || weapon.speed || weapon.range) && (
-                      <div className="grid grid-cols-3 gap-2 text-sm">
-                        {(weapon.magicAttack || weapon.magicalAttack) && (
-                          <div className="bg-black/30 rounded px-2 py-1 text-center">
-                            <span className="text-purple-400">✨ {weapon.magicAttack || weapon.magicalAttack}</span>
-                          </div>
-                        )}
-                        {weapon.speed && (
-                          <div className="bg-black/30 rounded px-2 py-1 text-center">
-                            <span className="text-blue-400">⚡ {weapon.speed}</span>
-                          </div>
-                        )}
-                        {weapon.range && (
-                          <div className="bg-black/30 rounded px-2 py-1 text-center">
-                            <span className="text-green-400">🎯 {weapon.range}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
 
                   {/* Selected Indicator */}
