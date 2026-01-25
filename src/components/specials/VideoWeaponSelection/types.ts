@@ -3,11 +3,18 @@
 export interface Weapon {
   weaponId: number;
   name: string;
+  description?: string;
+  rarityCode?: string;
+  rarityName?: string;
   rarityColor: string;
   imagePath: string;
   weaponType: string;
   physicalAttack: number;
+  magicAttack?: number;
   weight: number;
+  unlockLevel?: number;
+  specialCondition?: string | null;
+  // Legacy fields for backwards compatibility
   magicalAttack?: number;
   physicalDefense?: number;
   magicalDefense?: number;
