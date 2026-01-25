@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Weapon, PlayerSelection } from "./types";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Sword, Sparkles, Weight } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface WeaponSelectorProps {
   weapons: Weapon[];
@@ -161,21 +167,44 @@ const WeaponSelector = ({ weapons, players, onComplete }: WeaponSelectorProps) =
 
                   {/* Stats Section */}
                   <div className="p-4 flex-1 flex flex-col justify-between">
-                    {/* Fixed 3-column Stats Grid */}
-                    <div className="grid grid-cols-3 gap-2 text-sm">
-                      <div className="bg-black/40 rounded-lg px-2 py-2 text-center">
-                        <span className="text-gray-400 block text-xs mb-1">Ataque F:</span>
-                        <span className="text-amber-100 font-bold text-lg">{weapon.physicalAttack}</span>
+                    {/* Fixed 3-column Stats Grid with Icons */}
+                    <TooltipProvider>
+                      <div className="grid grid-cols-3 gap-2 text-sm">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="bg-black/40 rounded-lg px-2 py-2 flex flex-col items-center cursor-help">
+                              <Sword className="w-4 h-4 text-amber-400 mb-1" />
+                              <span className="text-amber-100 font-bold text-lg">{weapon.physicalAttack}</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>Ataque Físico</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="bg-black/40 rounded-lg px-2 py-2 flex flex-col items-center cursor-help">
+                              <Sparkles className="w-4 h-4 text-purple-400 mb-1" />
+                              <span className="text-amber-100 font-bold text-lg">{weapon.magicAttack ?? weapon.magicalAttack ?? 0}</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>Ataque Mágico</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="bg-black/40 rounded-lg px-2 py-2 flex flex-col items-center cursor-help">
+                              <Weight className="w-4 h-4 text-gray-400 mb-1" />
+                              <span className="text-amber-100 font-bold text-lg">{weapon.weight}</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>Peso</p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
-                      <div className="bg-black/40 rounded-lg px-2 py-2 text-center">
-                        <span className="text-gray-400 block text-xs mb-1">Ataque M:</span>
-                        <span className="text-amber-100 font-bold text-lg">{weapon.magicAttack ?? weapon.magicalAttack ?? 0}</span>
-                      </div>
-                      <div className="bg-black/40 rounded-lg px-2 py-2 text-center">
-                        <span className="text-gray-400 block text-xs mb-1">Peso:</span>
-                        <span className="text-amber-100 font-bold text-lg">{weapon.weight}</span>
-                      </div>
-                    </div>
+                    </TooltipProvider>
 
                     {/* Weapon Type Footer */}
                     <div className="text-center mt-4">
