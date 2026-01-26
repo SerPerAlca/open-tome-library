@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GameProvider } from "@/context/GameContext";
-import Index from "./pages/Index";
+import GameInitializer from "./components/intro/GameInitializer";
 import PlayerConfig from "./pages/PlayerConfig";
 import HeroSelection from "./pages/HeroSelection";
 import SelectionComplete from "./pages/SelectionComplete";
@@ -21,7 +21,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<GameInitializer />} />
             <Route path="/configuracion" element={<PlayerConfig />} />
             <Route path="/seleccion-heroes" element={<HeroSelection />} />
             <Route path="/seleccion-completa" element={<SelectionComplete />} />
