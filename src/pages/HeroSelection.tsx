@@ -149,23 +149,23 @@ const HeroSelection = () => {
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
-      {/* Main book container */}
-      <main className="flex-1 flex flex-col lg:flex-row min-h-0">
+      {/* Main book container - scales with viewport */}
+      <main className="flex-1 flex flex-col lg:flex-row min-h-0 max-h-[90vh] 2xl:max-h-[92vh]">
         {/* Left page - Hero image */}
-        <div className="lg:w-[45%] flex-shrink-0 min-h-0">
+        <div className="lg:w-[45%] 2xl:w-[42%] flex-shrink-0 min-h-0">
           <AnimatedBookPage side="left" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
-              {/* Hero image - with fixed aspect ratio */}
-              <div className="flex-1 flex items-center justify-center p-3 min-h-0">
-                <div className="relative w-full max-w-md mx-auto aspect-[3/4] flex-shrink-0">
-                  <div className="absolute inset-0 border-4 border-gold/40 rounded-sm shadow-lg overflow-hidden bg-secondary/50">
+              {/* Hero image - scales with viewport height */}
+              <div className="flex-1 flex items-center justify-center p-3 2xl:p-6 min-h-0">
+                <div className="relative w-full max-w-md 2xl:max-w-2xl mx-auto h-[55vh] 2xl:h-[70vh] flex-shrink-0">
+                  <div className="absolute inset-0 border-4 2xl:border-[6px] border-gold/40 rounded-sm shadow-lg overflow-hidden bg-secondary/50">
                     <HeroImage name={currentHero.name} />
                   </div>
 
-                  {/* Hero name plate */}
-                  <div className="absolute bottom-3 left-3 right-3 bg-background/90 border border-gold/50 p-2 text-center">
-                    <span className="font-display text-lg text-gold">{heroTitleName}</span>
-                    <span className="font-body text-sm text-muted-foreground block italic">
+                  {/* Hero name plate - scales on large screens */}
+                  <div className="absolute bottom-3 2xl:bottom-5 left-3 2xl:left-5 right-3 2xl:right-5 bg-background/90 border border-gold/50 p-2 2xl:p-3 text-center">
+                    <span className="font-display text-lg 2xl:text-2xl text-gold">{heroTitleName}</span>
+                    <span className="font-body text-sm 2xl:text-base text-muted-foreground block italic">
                       {currentHero.alias}
                     </span>
                   </div>
@@ -173,8 +173,8 @@ const HeroSelection = () => {
               </div>
 
               {/* Hero counter */}
-              <div className="text-center py-1 flex-shrink-0">
-                <span className="font-display text-sm text-muted-foreground">
+              <div className="text-center py-1 2xl:py-2 flex-shrink-0">
+                <span className="font-display text-sm 2xl:text-base text-muted-foreground">
                   — {currentHeroIndex + 1} de {heroes.length} —
                 </span>
               </div>
@@ -183,13 +183,13 @@ const HeroSelection = () => {
         </div>
 
         {/* Right page - Hero description */}
-        <div className="lg:w-[55%] flex-1 min-h-0">
+        <div className="lg:w-[55%] 2xl:w-[58%] flex-1 min-h-0">
           <AnimatedBookPage side="right" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col overflow-hidden">
               {/* Current player indicator */}
-              <div className="mb-3 text-center">
-                <div className="inline-block bg-gold/20 border border-gold/40 px-4 py-1.5 rounded-sm">
-                  <span className="font-display text-lg text-gold">
+              <div className="mb-3 2xl:mb-5 text-center">
+                <div className="inline-block bg-gold/20 border border-gold/40 px-4 2xl:px-6 py-1.5 2xl:py-2 rounded-sm">
+                  <span className="font-display text-lg 2xl:text-2xl text-gold">
                     Turno de {currentPlayer.name}
                   </span>
                 </div>
@@ -198,12 +198,12 @@ const HeroSelection = () => {
               {/* Hero info */}
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 {/* Decorative header */}
-                <div className="text-center mb-2">
-                  <div className="text-gold text-xl mb-1">☙</div>
-                  <h2 className="font-display text-2xl md:text-3xl text-primary mb-1">
+                <div className="text-center mb-2 2xl:mb-4">
+                  <div className="text-gold text-xl 2xl:text-2xl mb-1">☙</div>
+                  <h2 className="font-display text-2xl md:text-3xl 2xl:text-4xl text-primary mb-1">
                     {heroTitleName}
                   </h2>
-                  <p className="font-body text-base text-muted-foreground italic">
+                  <p className="font-body text-base 2xl:text-lg text-muted-foreground italic">
                     {currentHero.alias}
                   </p>
                   
@@ -212,18 +212,18 @@ const HeroSelection = () => {
                     <WeaponIcons weapons={currentHero.weaponsTypes} />
                   )}
                   
-                  <div className="divider-ornament mx-auto max-w-xs mt-2" />
+                  <div className="divider-ornament mx-auto max-w-xs 2xl:max-w-sm mt-2 2xl:mt-3" />
                 </div>
 
                 {/* Description with line breaks - contained within book */}
-                <div className="flex-1 flex flex-col items-start justify-start px-4 overflow-hidden min-h-0">
+                <div className="flex-1 flex flex-col items-start justify-start px-4 2xl:px-8 overflow-hidden min-h-0">
                   <div className="overflow-y-auto h-full w-full">
                     {descriptionParagraphs.map((paragraph, index) => (
                       <p
                         key={index}
-                        className={`font-body text-lg leading-relaxed text-foreground/90 text-justify mb-3 ${
+                        className={`font-body text-lg 2xl:text-xl leading-relaxed 2xl:leading-loose text-foreground/90 text-justify mb-3 2xl:mb-4 ${
                           index === 0
-                            ? "first-letter:text-4xl first-letter:font-display first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-none"
+                            ? "first-letter:text-4xl 2xl:first-letter:text-5xl first-letter:font-display first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-none"
                             : ""
                         }`}
                       >
@@ -234,14 +234,14 @@ const HeroSelection = () => {
                 </div>
 
                 {/* Players remaining info */}
-                <div className="text-center py-1 text-muted-foreground font-body text-sm italic">
+                <div className="text-center py-1 2xl:py-2 text-muted-foreground font-body text-sm 2xl:text-base italic">
                   {remainingPlayers} jugador{remainingPlayers !== 1 ? 'es' : ''} por elegir
                 </div>
               </div>
 
               {/* Decorative footer */}
-              <div className="text-center py-1">
-                <div className="text-gold text-xl">❧</div>
+              <div className="text-center py-1 2xl:py-2">
+                <div className="text-gold text-xl 2xl:text-2xl">❧</div>
               </div>
             </div>
           </AnimatedBookPage>
@@ -249,7 +249,7 @@ const HeroSelection = () => {
       </main>
 
       {/* Action buttons area - compact */}
-      <footer className="py-2 px-4 bg-secondary/90 border-t-2 border-gold/30">
+      <footer className="py-2 2xl:py-4 px-4 2xl:px-8 bg-secondary/90 border-t-2 border-gold/30">
         <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
           {/* 1. Héroe Anterior */}
           <button
