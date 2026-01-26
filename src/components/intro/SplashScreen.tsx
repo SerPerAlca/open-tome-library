@@ -13,17 +13,6 @@ const SplashScreen = ({ onStart }: SplashScreenProps) => {
       transition={{ duration: 0.5 }}
       className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-hidden"
     >
-      {/* Flames GIF Background - Bottom positioned */}
-      <div className="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none">
-        <img
-          src="https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif"
-          alt="Flames"
-          className="w-full h-full object-cover opacity-60"
-        />
-        {/* Gradient overlay to blend flames with black */}
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-black/50 to-black" />
-      </div>
-
       {/* Central Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4">
         {/* Decorative Ornament */}
