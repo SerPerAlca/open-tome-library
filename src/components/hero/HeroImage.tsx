@@ -41,16 +41,10 @@ const HeroImage = ({ name, className = "" }: HeroImageProps) => {
   }
 
   return (
-    <div className={`relative w-full h-full ${className}`}>
-      <img
-        src={imagePath}
-        alt={name}
-        className="w-full h-full object-cover"
-        onError={() => setImageError(true)}
-      />
-      {/* Fallback behind image in case of partial load */}
+    <div className={`relative w-full h-full flex items-center justify-center ${className}`}>
+      {/* Fallback behind image */}
       <div
-        className="absolute inset-0 -z-10 flex items-center justify-center"
+        className="absolute inset-0 flex items-center justify-center"
         style={{
           background: `linear-gradient(135deg, ${color1}, ${color2})`,
         }}
@@ -59,6 +53,12 @@ const HeroImage = ({ name, className = "" }: HeroImageProps) => {
           {initial}
         </span>
       </div>
+      <img
+        src={imagePath}
+        alt={name}
+        className="relative z-10 max-w-full max-h-full object-contain object-top"
+        onError={() => setImageError(true)}
+      />
     </div>
   );
 };

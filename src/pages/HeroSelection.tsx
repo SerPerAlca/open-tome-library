@@ -152,13 +152,13 @@ const HeroSelection = () => {
       {/* Main book container */}
       <main className="flex-1 flex flex-col lg:flex-row min-h-0">
         {/* Left page - Hero image */}
-        <div className="flex-1 min-h-0">
+        <div className="lg:w-[45%] flex-shrink-0 min-h-0">
           <AnimatedBookPage side="left" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
-              {/* Hero image - full page */}
-              <div className="flex-1 flex items-center justify-center p-3">
-                <div className="relative w-full h-full max-w-md mx-auto">
-                  <div className="absolute inset-0 border-4 border-gold/40 rounded-sm shadow-lg overflow-hidden">
+              {/* Hero image - with fixed aspect ratio */}
+              <div className="flex-1 flex items-center justify-center p-3 min-h-0">
+                <div className="relative w-full max-w-md mx-auto aspect-[3/4] flex-shrink-0">
+                  <div className="absolute inset-0 border-4 border-gold/40 rounded-sm shadow-lg overflow-hidden bg-secondary/50">
                     <HeroImage name={currentHero.name} />
                   </div>
 
@@ -173,7 +173,7 @@ const HeroSelection = () => {
               </div>
 
               {/* Hero counter */}
-              <div className="text-center py-1">
+              <div className="text-center py-1 flex-shrink-0">
                 <span className="font-display text-sm text-muted-foreground">
                   — {currentHeroIndex + 1} de {heroes.length} —
                 </span>
@@ -183,7 +183,7 @@ const HeroSelection = () => {
         </div>
 
         {/* Right page - Hero description */}
-        <div className="flex-1 min-h-0">
+        <div className="lg:w-[55%] flex-1 min-h-0">
           <AnimatedBookPage side="right" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col overflow-hidden">
               {/* Current player indicator */}
