@@ -156,18 +156,22 @@ const HeroSelection = () => {
           <AnimatedBookPage side="left" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
               {/* Hero image - scales with viewport height */}
-              <div className="flex-1 flex items-center justify-center p-3 2xl:p-6 min-h-0">
-                <div className="relative w-full max-w-md 2xl:max-w-2xl mx-auto h-[55vh] 2xl:h-[70vh] flex-shrink-0">
-                  <div className="absolute inset-0 border-4 2xl:border-[6px] border-gold/40 rounded-sm shadow-lg overflow-hidden bg-secondary/50">
-                    <HeroImage name={currentHero.name} />
-                  </div>
-
-                  {/* Hero name plate - scales on large screens */}
-                  <div className="absolute bottom-3 2xl:bottom-5 left-3 2xl:left-5 right-3 2xl:right-5 bg-background/90 border border-gold/50 p-2 2xl:p-3 text-center">
-                    <span className="font-display text-lg 2xl:text-2xl text-gold">{heroTitleName}</span>
-                    <span className="font-body text-sm 2xl:text-base text-muted-foreground block italic">
-                      {currentHero.alias}
-                    </span>
+              <div className="flex-1 flex items-center justify-center min-h-0">
+                <div className="relative w-full max-w-md 2xl:max-w-2xl mx-auto aspect-[3/4] h-[65vh] 2xl:h-[75vh] flex-shrink-0">
+                  {/* Golden frame container */}
+                  <div className="absolute inset-0 border-4 2xl:border-[6px] border-gold/40 rounded-sm shadow-lg overflow-hidden bg-secondary/50 flex flex-col">
+                    {/* Image area - takes remaining space above name plate */}
+                    <div className="flex-1 relative overflow-hidden">
+                      <HeroImage name={currentHero.name} className="absolute inset-0" />
+                    </div>
+                    
+                    {/* Hero name plate - fixed at bottom inside frame */}
+                    <div className="relative z-20 bg-background/95 border-t border-gold/50 px-3 2xl:px-4 py-2 2xl:py-3 text-center flex-shrink-0">
+                      <span className="font-display text-lg 2xl:text-2xl text-gold block">{heroTitleName}</span>
+                      <span className="font-body text-sm 2xl:text-base text-muted-foreground block italic">
+                        {currentHero.alias}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
