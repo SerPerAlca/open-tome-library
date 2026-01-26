@@ -1,14 +1,40 @@
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+
+const INTRO_VIDEO_URL = "http://localhost:8082/static/video/intro-eternum.mp4";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [showIntro, setShowIntro] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleStart = () => {
+    setShowIntro(true);
+  };
+
+  const handleVideoEnd = () => {
     navigate("/configuracion");
   };
 
+  const handleVideoError = () => {
+    // If video fails to load, navigate immediately
+    navigate("/configuracion");
+  };
+
+  const handleSkip = () => {
+    navigate("/configuracion");
+  };
+
+  const handleCanPlay = () => {
+    setIsVideoLoading(false);
+    videoRef.current?.play().catch(() => {
+      // If autoplay fails, user can still watch or skip
+    });
+  };
+
   const handleRules = () => {
-    // TODO: Implement rules page
     console.log("Reglas - por implementar");
   };
 
@@ -85,6 +111,53 @@ const Index = () => {
           </button>
         </div>
       </footer>
+
+      {/* Video Overlay */}
+      <AnimatePresence>
+        {showIntro && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-50 bg-black flex items-center justify-center"
+          >
+            <video
+              ref={videoRef}
+              src={INTRO_VIDEO_URL}
+              className="w-full h-full object-cover"
+              playsInline
+              preload="auto"
+              onCanPlay={handleCanPlay}
+              onEnded={handleVideoEnd}
+              onError={handleVideoError}
+            />
+
+            {/* Loading State */}
+            {isVideoLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
+                <div className="w-16 h-16 border-4 border-gold/30 border-t-gold rounded-full animate-spin mb-6" />
+                <p className="font-display text-xl text-gold animate-pulse">
+                  Cargando introducción...
+                </p>
+              </div>
+            )}
+
+            {/* Skip Button */}
+            {!isVideoLoading && (
+              <button
+                onClick={handleSkip}
+                className="absolute bottom-8 right-8 px-4 py-2 
+                           text-foreground/50 hover:text-foreground/80
+                           font-body text-sm tracking-wide
+                           transition-colors duration-300"
+              >
+                Saltar Intro
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
