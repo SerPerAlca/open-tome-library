@@ -41,7 +41,7 @@ const HeroImage = ({ name, className = "" }: HeroImageProps) => {
   }
 
   return (
-    <div className={`relative w-full h-full flex items-center justify-center ${className}`}>
+    <div className={`w-full h-full ${className}`}>
       {/* Fallback behind image */}
       <div
         className="absolute inset-0 flex items-center justify-center"
@@ -56,7 +56,7 @@ const HeroImage = ({ name, className = "" }: HeroImageProps) => {
       <img
         src={imagePath}
         alt={name}
-        className="relative z-10 max-w-full max-h-full object-contain object-top"
+        className="absolute inset-0 w-full h-full object-contain object-top z-10"
         onError={() => setImageError(true)}
       />
     </div>
