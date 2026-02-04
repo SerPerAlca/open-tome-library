@@ -8,6 +8,7 @@ import DiceOverlay from "@/components/dice/DiceOverlay";
 import CombatScene from "@/components/combat/CombatScene";
 import DevTools from "@/components/dev/DevTools";
 import VideoWeaponSelection from "@/components/specials/VideoWeaponSelection";
+import GameOverScene from "@/components/specials/GameOverScene";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
 
@@ -77,10 +78,18 @@ const Book = () => {
   // Check if current scene is a combat scene
   const isCombatScene = currentScene?.sceneType === "FGHT";
 
+  // Check if current scene is an END scene (Game Over)
+  const isEndScene = currentScene?.sceneType === "END" || currentScene?.id === 9999;
+
   // Check if current scene is a special scene (VIDEO_WEAPON_SELECTION)
   const isWeaponSelectionScene =
     currentScene?.sceneType === "SPEC" &&
     (currentScene as any)?.resource === "VIDEO_WEAPON_SELECTION";
+
+  // If it's an END scene, render GameOverScene
+  if (isEndScene && currentScene) {
+    return <GameOverScene scene={currentScene} />;
+  }
 
   // If it's a weapon selection scene, render VideoWeaponSelection
   if (isWeaponSelectionScene && currentScene) {
