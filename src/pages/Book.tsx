@@ -5,12 +5,10 @@ import ActionButtons from "@/components/ActionButtons";
 import AnimatedBookPage from "@/components/AnimatedBookPage";
 import SceneContent from "@/components/SceneContent";
 import DiceOverlay from "@/components/dice/DiceOverlay";
-import CombatScene from "@/components/combat/CombatScene";
 import DevTools from "@/components/dev/DevTools";
-import VideoWeaponSelection from "@/components/specials/VideoWeaponSelection";
-import GameOverScene from "@/components/specials/GameOverScene";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
+import { getSpecialSceneView } from "@/components/specials/SceneRegistry";
 
 const menuItems = [
   { id: "chapter-1", label: "Capítulo I: El Inicio", icon: "§" },
@@ -20,10 +18,11 @@ const menuItems = [
 ];
 
 const Book = () => {
-  // Dice overlay state
+  // ============================================
+  // State & Hooks
+  // ============================================
   const [showDice, setShowDice] = useState(false);
 
-  // Game engine hook
   const {
     currentScene,
     accumulatedText,
@@ -37,80 +36,61 @@ const Book = () => {
     jumpToScene,
   } = useGameEngine(1);
 
-  // Page animation hook
   const { animationState, isAnimating, turnPageForward } = usePageAnimation();
 
+  // ============================================
+  // Navigation Handlers
+  // ============================================
   const handleMenuSelect = useCallback((id: string) => {
-    // TODO: Implement chapter navigation via menu
     console.log("Menu selected:", id);
   }, []);
 
   const handleNextPage = useCallback(async () => {
     if (isAnimating || !canGoNext) return;
-
     await turnPageForward();
     goToNextScene();
   }, [isAnimating, canGoNext, turnPageForward, goToNextScene]);
 
-  const handleDiceRoll = useCallback(() => {
-    setShowDice(true);
-  }, []);
-
-  const handleIndex = useCallback(() => {
-    // TODO: Implement index navigation
-    console.log("Navigate to index");
-  }, []);
-
-  // Handle combat scene continue
   const handleCombatContinue = useCallback(() => {
     if (currentScene?.nextSceneId) {
       goToNextScene();
     }
   }, [currentScene, goToNextScene]);
 
-  // Handle special scene continue
   const handleSpecialSceneContinue = useCallback(() => {
     if (currentScene?.nextSceneId) {
       goToNextScene();
     }
   }, [currentScene, goToNextScene]);
 
-  // Check if current scene is a combat scene
-  const isCombatScene = currentScene?.sceneType === "FGHT";
+  // ============================================
+  // Action Handlers
+  // ============================================
+  const handleDiceRoll = useCallback(() => setShowDice(true), []);
+  const handleIndex = useCallback(() => console.log("Navigate to index"), []);
 
-  // Check if current scene is an END scene (Game Over)
-  const isEndScene = currentScene?.sceneType === "END" || currentScene?.id === 9999;
+  // ============================================
+  // Scene View Resolution
+  // ============================================
+  const specialView = getSpecialSceneView(currentScene, {
+    onCombatContinue: handleCombatContinue,
+    onSpecialComplete: handleSpecialSceneContinue,
+  });
 
-  // Check if current scene is a special scene (VIDEO_WEAPON_SELECTION)
-  const isWeaponSelectionScene =
-    currentScene?.sceneType === "SPEC" &&
-    (currentScene as any)?.resource === "VIDEO_WEAPON_SELECTION";
-
-  // If it's an END scene, render GameOverScene
-  if (isEndScene && currentScene) {
-    return <GameOverScene scene={currentScene} />;
-  }
-
-  // If it's a weapon selection scene, render VideoWeaponSelection
-  if (isWeaponSelectionScene && currentScene) {
-    return (
-      <VideoWeaponSelection
-        scene={currentScene}
-        onComplete={handleSpecialSceneContinue}
-      />
-    );
-  }
-
-  // If it's a combat scene, render CombatScene instead
-  if (isCombatScene && currentScene) {
+  // If there's a special view, render it with global overlays
+  if (specialView) {
     return (
       <>
-        <CombatScene scene={currentScene} onContinue={handleCombatContinue} />
+        {specialView}
         <DiceOverlay isOpen={showDice} onClose={() => setShowDice(false)} />
+        <DevTools currentSceneId={currentScene?.id ?? null} onJumpToScene={jumpToScene} />
       </>
     );
   }
 
+  // ============================================
+  // Default Book Layout
+  // ============================================
   const actionButtons = [
     { id: "dice", label: "Lanzar Dados", icon: "🎲", onClick: handleDiceRoll },
     { id: "index", label: "Índice General", icon: "☰", onClick: handleIndex },
@@ -119,35 +99,24 @@ const Book = () => {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col">
-      {/* Main book container */}
       <main className="flex-1 flex flex-col lg:flex-row bg-paper">
         {/* Left page */}
         <div className="flex-1 min-h-[50vh] lg:min-h-0 bg-paper">
           <AnimatedBookPage side="left" animationState={animationState} className="h-full">
             <div className="h-full flex flex-col">
-              {/* Menu - positioned discretely at the top */}
               <div className="mb-6">
-                <BookMenu
-                  items={menuItems}
-                  onSelect={handleMenuSelect}
-                />
+                <BookMenu items={menuItems} onSelect={handleMenuSelect} />
               </div>
 
-              {/* Main content - Image display */}
               <div className="flex-1 flex items-center justify-center">
                 {isLoading ? (
                   <div className="font-body text-muted-foreground italic animate-pulse">
                     Cargando ilustración...
                   </div>
                 ) : error ? (
-                  <div className="font-body text-destructive italic">
-                    {error}
-                  </div>
+                  <div className="font-body text-destructive italic">{error}</div>
                 ) : currentImageUrl ? (
-                  <ImageDisplay
-                    src={currentImageUrl}
-                    alt={`Escena ${currentScene?.id || ""}`}
-                  />
+                  <ImageDisplay src={currentImageUrl} alt={`Escena ${currentScene?.id || ""}`} />
                 ) : (
                   <div className="font-body text-muted-foreground italic">
                     Sin ilustración disponible
@@ -155,7 +124,6 @@ const Book = () => {
                 )}
               </div>
 
-              {/* Page number */}
               <div className="text-center mt-4">
                 <span className="font-display text-sm text-muted-foreground">
                   — {currentScene?.id || 1} —
@@ -177,9 +145,7 @@ const Book = () => {
                 </div>
               ) : error ? (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="font-body text-destructive italic">
-                    {error}
-                  </div>
+                  <div className="font-body text-destructive italic">{error}</div>
                 </div>
               ) : currentScene ? (
                 <SceneContent
@@ -197,7 +163,6 @@ const Book = () => {
                 </div>
               )}
 
-              {/* Page number */}
               <div className="text-center mt-4">
                 <span className="font-display text-sm text-muted-foreground">
                   — {(currentScene?.id || 1) + 1} —
@@ -208,19 +173,12 @@ const Book = () => {
         </div>
       </main>
 
-      {/* Action buttons area */}
       <footer className="py-4 px-6 bg-secondary/90 border-t-2 border-gold/30">
         <ActionButtons buttons={actionButtons} />
       </footer>
 
-      {/* Dice overlay */}
       <DiceOverlay isOpen={showDice} onClose={() => setShowDice(false)} />
-
-      {/* Dev Tools (only in development) */}
-      <DevTools
-        currentSceneId={currentScene?.id ?? null}
-        onJumpToScene={jumpToScene}
-      />
+      <DevTools currentSceneId={currentScene?.id ?? null} onJumpToScene={jumpToScene} />
     </div>
   );
 };
