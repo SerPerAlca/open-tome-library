@@ -1,7 +1,8 @@
 {
   "id": "GAME_RUN_DODGE",
   "title": "Fuga de la Roca Negra",
-  "context": "Veinticinco metros de terreno abierto os separan de la salvación. Las flechas y balas de los guardias muerden el suelo a vuestro paso. Debéis cruzar antes de que vuestra vitalidad se agote.",
+  "context": "Veinticinco metros de terreno abierto os separan de la salvación. ¡Debéis ser rápidos! Las flechas y balas de los guardias muerden el suelo a vuestro paso. Cruzad antes de que vuestra vitalidad se agote.",
+  "type": "100% suerte",
   "specs": [
     { "label": "Objetivo", "value": "Recorrer 25 metros", "icon": "Flag" },
     { "label": "Daño", "value": "1 pto Vitalidad", "icon": "Heart" },
@@ -26,6 +27,24 @@
       "title": "Fase de Resolución",
       "description": "Si tu posición final coincide exactamente con uno de los metros anunciados: IMPACTO (-1 Vida).",
       "icon": "Zap"
+    }
+  ],
+  "examples": [
+    {
+      "case": "Turno 1. El Master anuncia los disparos en 7 y 15. Jugador1 lanza los dados y saca un 7.",
+      "result": "¡IMPACTO! Jugador1 se has detenido justo en la trayectoria de un disparo. Pierde 1 de Vitalidad."
+    },
+    {
+      "case": "Turno1. El jugador2 lanza los dados y obtiene un 8.",
+      "result": "A SALVO. Se detiene en el metro 8, donde no había disparos. Sigue ileso."
+    },
+    {
+      "case": "Turno2. El Master anuncia los dos disparos en 12. Jugador1 lanza los dados y obtiene un 4.",
+      "result": "¡A SALVO por los pelos!. Se detiene en el metro 11, donde no había disparos."
+    },
+    {
+      "case": "Turno2. El jugador2 lanza los dados y obtiene un 4 también",
+      "result": "¡IMPACTO DOBLE!. El jugador2 es alcanzado por los dos disparos a la vez. Pierde 2 de Vitalidad"
     }
   ],
   "conclusion": "Victoria: Suma total ≥ 25. Derrota: Vitalidad 0 (GAME OVER)."
