@@ -1,0 +1,32 @@
+{
+  "id": "GAME_RUN_DODGE",
+  "title": "Fuga de la Roca Negra",
+  "context": "Veinticinco metros de terreno abierto os separan de la salvación. Las flechas y balas de los guardias muerden el suelo a vuestro paso. Debéis cruzar antes de que vuestra vitalidad se agote.",
+  "specs": [
+    { "label": "Objetivo", "value": "Recorrer 25 metros", "icon": "Flag" },
+    { "label": "Daño", "value": "1 pto Vitalidad", "icon": "Heart" },
+    { "label": "Amenaza", "value": "4 Guardias", "icon": "ShieldAlert" }
+  ],
+  "phases": [
+    {
+      "step": 1,
+      "title": "Fase de Acecho (El Master)",
+      "description": "El Master anuncia en voz alta dos números (metros) entre el 1 y el 24. Puede concentrar el fuego repitiendo el mismo número.",
+      "quote": "¡Fuego a los siete y diez metros!",
+      "icon": "Eye"
+    },
+    {
+      "step": 2,
+      "title": "Fase de Carrera (Jugadores)",
+      "description": "Cada jugador lanza 2d6. Suma el resultado a tu posición anterior para saber en qué metro exacto te detienes.",
+      "icon": "Dices"
+    },
+    {
+      "step": 3,
+      "title": "Fase de Resolución",
+      "description": "Si tu posición final coincide exactamente con uno de los metros anunciados: IMPACTO (-1 Vida).",
+      "icon": "Zap"
+    }
+  ],
+  "conclusion": "Victoria: Suma total ≥ 25. Derrota: Vitalidad 0 (GAME OVER)."
+}
