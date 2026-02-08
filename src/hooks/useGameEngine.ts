@@ -165,11 +165,13 @@ export const useGameEngine = (chapterId: number = 1) => {
     });
   }, []);
 
-  // Handle choice selection
-  const handleChoiceSelect = useCallback((choice: Choice) => {
+  // Handle choice selection - returns destination scene type for animation decisions
+  const handleChoiceSelect = useCallback((choice: Choice): { destinationType?: string } => {
     if (choice.obligatory) {
       // Obligatory choice: navigate to new scene
       navigateToScene(choice.destinationSceneId);
+      // Return the destination type for the caller to decide on animation
+      return { destinationType: choice.destinationType };
     } else {
       // Non-obligatory (conversation): append text and update choices
       setState((prev) => {
@@ -185,6 +187,7 @@ export const useGameEngine = (chapterId: number = 1) => {
           currentChoices: destinationScene.choices || [],
         };
       });
+      return {};
     }
   }, [navigateToScene]);
 
@@ -214,6 +217,23 @@ export const useGameEngine = (chapterId: number = 1) => {
     return currentChoices.length === 0;
   }, [state]);
 
+  // Get a scene by ID (useful for checking next scene type)
+  const getSceneById = useCallback((sceneId: number): Scene | null => {
+    return state.scenes.find((s) => s.id === sceneId) || null;
+  }, [state.scenes]);
+
+  // Get the next scene (based on currentScene.nextSceneId)
+  const getNextScene = useCallback((): Scene | null => {
+    if (!state.currentScene?.nextSceneId) return null;
+    return getSceneById(state.currentScene.nextSceneId);
+  }, [state.currentScene, getSceneById]);
+
+  // Check if a scene type requires special transition (no page animation)
+  const isSpecialSceneType = useCallback((sceneType?: string): boolean => {
+    const specialTypes = ["FGHT", "SPEC", "GAME", "END"];
+    return sceneType ? specialTypes.includes(sceneType) : false;
+  }, []);
+
   return {
     // State
     currentScene: state.currentScene,
@@ -229,5 +249,10 @@ export const useGameEngine = (chapterId: number = 1) => {
     canGoNext: canGoNext(),
     navigateToScene,
     jumpToScene,
+
+    // Scene inspection
+    getSceneById,
+    getNextScene,
+    isSpecialSceneType,
   };
 };

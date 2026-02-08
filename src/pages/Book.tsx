@@ -34,6 +34,9 @@ const Book = () => {
     goToNextScene,
     canGoNext,
     jumpToScene,
+    getNextScene,
+    getSceneById,
+    isSpecialSceneType,
   } = useGameEngine(1);
 
   const { animationState, isAnimating, turnPageForward } = usePageAnimation();
@@ -45,11 +48,22 @@ const Book = () => {
     console.log("Menu selected:", id);
   }, []);
 
+  // Smart navigation: only animate page turn for MAIN scenes
   const handleNextPage = useCallback(async () => {
     if (isAnimating || !canGoNext) return;
+    
+    const nextScene = getNextScene();
+    
+    // If next scene is a special type, skip page animation
+    if (nextScene && isSpecialSceneType(nextScene.sceneType)) {
+      goToNextScene();
+      return;
+    }
+    
+    // Standard MAIN scene: animate page turn
     await turnPageForward();
     goToNextScene();
-  }, [isAnimating, canGoNext, turnPageForward, goToNextScene]);
+  }, [isAnimating, canGoNext, turnPageForward, goToNextScene, getNextScene, isSpecialSceneType]);
 
   const handleCombatContinue = useCallback(() => {
     if (currentScene?.nextSceneId) {
@@ -148,11 +162,20 @@ const Book = () => {
                   <div className="font-body text-destructive italic">{error}</div>
                 </div>
               ) : currentScene ? (
-                <SceneContent
+              <SceneContent
                   scene={currentScene}
                   textParagraphs={accumulatedText}
                   choices={currentChoices}
-                  onChoiceSelect={handleChoiceSelect}
+                  onChoiceSelect={(choice) => {
+                    // Smart choice handling: check if destination is special
+                    const destinationScene = choice.obligatory 
+                      ? getSceneById(choice.destinationSceneId)
+                      : null;
+                    
+                    // For obligatory choices to special scenes, no animation needed
+                    // The special scene component handles its own transition
+                    handleChoiceSelect(choice);
+                  }}
                   className="flex-1"
                 />
               ) : (
