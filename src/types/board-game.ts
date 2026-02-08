@@ -14,11 +14,18 @@ export interface BoardGamePhase {
   icon: string;
 }
 
+export interface BoardGameExample {
+  case: string;
+  result: string;
+}
+
 export interface BoardGameData {
   id: string;
   title: string;
   context: string;
+  type?: string;
   specs: BoardGameSpec[];
   phases: BoardGamePhase[];
+  examples?: BoardGameExample[];
   conclusion: string;
 }

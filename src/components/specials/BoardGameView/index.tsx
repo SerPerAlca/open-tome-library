@@ -7,6 +7,7 @@ import BoardGameSpecs from "./BoardGameSpecs";
 import BoardGamePhases from "./BoardGamePhases";
 import BoardGameConclusion from "./BoardGameConclusion";
 import BoardGameActions from "./BoardGameActions";
+import BoardGameExamples from "./BoardGameExamples";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Extended props to support game over navigation
@@ -114,8 +115,8 @@ const BoardGameView = ({ scene, onComplete, onGameOver }: BoardGameViewProps) =>
         }}
       >
         <div className="p-8 md:p-12 space-y-8">
-          {/* Header: Title & Context */}
-          <BoardGameHeader title={gameData.title} context={gameData.context} />
+          {/* Header: Title, Type Badge & Context */}
+          <BoardGameHeader title={gameData.title} context={gameData.context} type={gameData.type} />
 
           {/* Specs Grid */}
           <BoardGameSpecs specs={gameData.specs} />
@@ -132,6 +133,11 @@ const BoardGameView = ({ scene, onComplete, onGameOver }: BoardGameViewProps) =>
 
           {/* Conclusion */}
           <BoardGameConclusion conclusion={gameData.conclusion} />
+
+          {/* Examples Panel (Hover) */}
+          {gameData.examples && gameData.examples.length > 0 && (
+            <BoardGameExamples examples={gameData.examples} />
+          )}
 
           {/* Action Buttons */}
           <BoardGameActions 
