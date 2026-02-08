@@ -37,6 +37,7 @@ const Book = () => {
     getNextScene,
     getSceneById,
     isSpecialSceneType,
+    goToGameOver,
   } = useGameEngine(1);
 
   const { animationState, isAnimating, turnPageForward } = usePageAnimation();
@@ -77,6 +78,10 @@ const Book = () => {
     }
   }, [currentScene, goToNextScene]);
 
+  const handleGameOver = useCallback(() => {
+    goToGameOver();
+  }, [goToGameOver]);
+
   // ============================================
   // Action Handlers
   // ============================================
@@ -89,6 +94,7 @@ const Book = () => {
   const specialView = getSpecialSceneView(currentScene, {
     onCombatContinue: handleCombatContinue,
     onSpecialComplete: handleSpecialSceneContinue,
+    onGameOver: handleGameOver,
   });
 
   // If there's a special view, render it with global overlays
