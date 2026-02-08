@@ -230,9 +230,15 @@ export const useGameEngine = (chapterId: number = 1) => {
 
   // Check if a scene type requires special transition (no page animation)
   const isSpecialSceneType = useCallback((sceneType?: string): boolean => {
-    const specialTypes = ["FGHT", "SPEC", "GAME", "END"];
+    const specialTypes = ["FGHT", "SPEC", "GAME", "END", "TABL"];
     return sceneType ? specialTypes.includes(sceneType) : false;
   }, []);
+
+  // Navigate directly to game over scene
+  const goToGameOver = useCallback(() => {
+    const GAME_OVER_SCENE_ID = 9999;
+    navigateToScene(GAME_OVER_SCENE_ID);
+  }, [navigateToScene]);
 
   return {
     // State
@@ -249,6 +255,7 @@ export const useGameEngine = (chapterId: number = 1) => {
     canGoNext: canGoNext(),
     navigateToScene,
     jumpToScene,
+    goToGameOver,
 
     // Scene inspection
     getSceneById,
