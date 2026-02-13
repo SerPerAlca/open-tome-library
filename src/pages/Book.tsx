@@ -8,6 +8,7 @@ import DiceOverlay from "@/components/dice/DiceOverlay";
 import DevTools from "@/components/dev/DevTools";
 import { useGameEngine } from "@/hooks/useGameEngine";
 import { usePageAnimation } from "@/hooks/usePageAnimation";
+import { useSceneAudio } from "@/hooks/useSceneAudio";
 import { getSpecialSceneView } from "@/components/specials/SceneRegistry";
 
 const menuItems = [
@@ -41,6 +42,9 @@ const Book = () => {
   } = useGameEngine(1);
 
   const { animationState, isAnimating, turnPageForward } = usePageAnimation();
+
+  // Scene audio playback
+  useSceneAudio(currentScene?.chapterId, currentScene?.id);
 
   // ============================================
   // Navigation Handlers
