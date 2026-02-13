@@ -25,6 +25,7 @@ export interface Scene {
   id: number;
   nextSceneId?: number;
   sceneType?: string;
+  chapterId?: number;
   sceneText: string;
   chapterDescription?: string;
   sceneLocation?: string;
